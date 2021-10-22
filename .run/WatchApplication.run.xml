@@ -1,0 +1,16 @@
+<component name="ProjectRunConfigurationManager">
+    <configuration default="false" name="WatchApplication" type="SpringBootApplicationConfigurationType"
+                   factoryName="Spring Boot">
+        <module name="SpringBootServer.main"/>
+        <option name="SPRING_BOOT_MAIN_CLASS" value="i.watch.WatchApplication"/>
+        <option name="ENABLE_LAUNCH_OPTIMIZATION" value="false"/>
+        <option name="HIDE_BANNER" value="true"/>
+        <option name="VM_PARAMETERS" value="-Dglobal.server.host=10.0.0.10 -Dspring.profiles.active=dev"/>
+        <option name="ALTERNATIVE_JRE_PATH"/>
+        <option name="SHORTEN_COMMAND_LINE" value="NONE"/>
+        <option name="UPDATE_ACTION_UPDATE_POLICY" value="UpdateClassesAndResources"/>
+        <method v="2">
+            <option name="Make" enabled="true"/>
+        </method>
+    </configuration>
+</component>

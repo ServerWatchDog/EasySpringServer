@@ -9,7 +9,5 @@ data class SoftConfigProperties(
     var api: String,
     var name: String,
     var host: String,
-    var path: String,
-    var sessionTimeout: Long ,
-    var disableCors: Boolean,
+    var dev: Boolean
 )

@@ -1,12 +1,13 @@
 global:
   server:
-    name: StaticNote4K
+    name: WatchDog4K
     host: 127.0.0.1
-    path: ${user.home}/.config/note
     api: /api
-    api-path: ${global.server.api}
+    dev: false
 spring:
   profiles:
     active: prod
   cache:
     type: redis
+  application:
+    name: ${global.server.name}
