@@ -8,6 +8,9 @@ import io.swagger.v3.oas.models.security.SecurityScheme
 import org.springframework.context.annotation.Bean
 import org.springframework.stereotype.Component
 
+/**
+ * SpringDoc OpenAPI 配置
+ */
 @Component
 class OpenAPIConfiguration {
 

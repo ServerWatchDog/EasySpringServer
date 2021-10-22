@@ -12,6 +12,14 @@ CREATE TABLE `t_config`
     `v` MEDIUMTEXT               NOT NULL
 ) ENGINE 'InnoDB' COMMENT '配置表';
 
+CREATE TABLE t_user_group
+(
+    `t_id`          INT(11)      NOT NULL PRIMARY KEY AUTO_INCREMENT COMMENT '角色ID',
+    `name`          VARCHAR(128) NOT NULL COMMENT '角色名称',
+    `default_group` BOOLEAN      NOT NULL DEFAULT FALSE COMMENT '默认用户组',
+    `details`       VARCHAR(255) NOT NULL DEFAULT '' COMMENT '角色简易介绍'
+) ENGINE = 'InnoDB';
+
 CREATE TABLE `t_user`
 (
     `t_id`          INT(20) PRIMARY KEY NOT NULL COMMENT '用户id',
@@ -20,34 +28,18 @@ CREATE TABLE `t_user`
     `password`      VARCHAR(512)        NOT NULL COMMENT '密码',
     `2fa_code`      VARCHAR(64)         NOT NULL DEFAULT '' COMMENT '2FA验证',
     `register_time` DATETIME            NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '注册时间',
+    `group_id`      INT(20)             NOT NULL,
+    CONSTRAINT FOREIGN KEY (`group_id`) REFERENCES t_user_group (`t_id`)
+        ON UPDATE RESTRICT
+        ON DELETE RESTRICT,
     UNIQUE INDEX user_email (email) USING BTREE
-
 ) ENGINE 'InnoDB';
-CREATE TABLE t_user_group
-(
-    `t_id`          INT(11)      NOT NULL PRIMARY KEY AUTO_INCREMENT COMMENT '角色ID',
-    `name`          VARCHAR(128) NOT NULL COMMENT '角色名称',
-    `default_group` BOOLEAN      NOT NULL DEFAULT FALSE COMMENT '默认用户组',
-    `details`       VARCHAR(255) NOT NULL DEFAULT '' COMMENT '角色简易介绍'
-) ENGINE = 'InnoDB';
+
 CREATE TABLE t_user_authority
 (
     `t_id`    VARCHAR(255) NOT NULL COMMENT '权限名称',
     `details` VARCHAR(255) NOT NULL COMMENT '权限简易介绍',
     PRIMARY KEY (`t_id`) USING BTREE
-) ENGINE = 'InnoDB';
-CREATE TABLE `t_user_to_group`
-(
-    `user_id`  INT(11) NOT NULL,
-    `group_id` INT(11) NOT NULL,
-    PRIMARY KEY (`user_id`, `group_id`) USING BTREE,
-    INDEX (`group_id`) USING BTREE,
-    CONSTRAINT FOREIGN KEY (`group_id`) REFERENCES t_user_group (`t_id`)
-        ON UPDATE RESTRICT
-        ON DELETE RESTRICT,
-    CONSTRAINT FOREIGN KEY (`user_id`) REFERENCES `t_user` (`t_id`)
-        ON UPDATE RESTRICT
-        ON DELETE RESTRICT
 ) ENGINE = 'InnoDB';
 CREATE TABLE t_user_group_to_authority
 (
@@ -63,20 +55,20 @@ CREATE TABLE t_user_group_to_authority
         ON DELETE RESTRICT
 ) ENGINE = InnoDB;
 
-INSERT INTO t_user(t_id, email, name, password)
-VALUES (1, 'admin@admin.com',
-        'admin',
-        CONCAT('V1:', SHA2(CONCAT('watch-dog-', SHA2('admin', 256)), 256)));
-
 SET @default_admin_group_id := (SELECT v
                                 FROM t_internal_config
                                 WHERE k = 'user-group.default.id');
 
-INSERT INTO t_user_group(t_id, name, details)
-VALUES (@default_admin_group_id, '管理员', '管理员角色，具有一切权限');
+INSERT INTO t_user_group(t_id, default_group, name, details)
+VALUES (@default_admin_group_id, TRUE, '管理员', '管理员角色，具有一切权限');
 
-INSERT INTO t_user_to_group(user_id, group_id)
-VALUES (1, @default_admin_group_id);
+INSERT INTO t_user(t_id, email, name, password, group_id)
+VALUES (1, 'admin@admin.com',
+        'admin',
+        CONCAT('V1:', SHA2(CONCAT('watch-dog-', SHA2('admin', 256)), 256)),
+        @default_admin_group_id);
+
+
 
 INSERT INTO t_user_authority(t_id, details)
 VALUES ('user.login', '用户登录权限'),
@@ -104,3 +96,8 @@ BEGIN
 
 END;
 CALL update_admin_group_authority();
+# 插入默认注册组
+INSERT INTO `t_user_group`(t_id, name, default_group, details)
+VALUES (2, '新注册用户组', FALSE, '新用户注册时放置的组');
+INSERT INTO `t_config`(`k`, `v`)
+VALUES ('user-group.default.register.id', '2');

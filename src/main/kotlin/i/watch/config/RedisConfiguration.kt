@@ -9,6 +9,9 @@ import com.fasterxml.jackson.module.kotlin.KotlinModule
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
+/**
+ * Redis 转义
+ */
 @Configuration
 class RedisConfiguration {
     @Bean(name = ["redisJacksonManager"])

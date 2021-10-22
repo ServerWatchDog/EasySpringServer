@@ -11,3 +11,5 @@ spring:
     type: redis
   application:
     name: ${global.server.name}
+  flyway:
+    locations: classpath:db
