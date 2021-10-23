@@ -24,9 +24,9 @@ class OpenAPIConfiguration {
                 )
             )
             .info(
-                Info().title("Note API").version("last").description(
+                Info().title("WatchDog API").version("last").description(
                     """
-                       服务器后端 API.
+                       WatchDog 服务器后端 API.
                     """.trimIndent()
                 )
                     .termsOfService("https://github.com/orgs/ServerWatchDog/")

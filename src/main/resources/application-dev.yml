@@ -12,6 +12,9 @@ spring:
     addresses: ${global.server.host}
     username: guest
     password: guest
+  jpa:
+    open-in-view: true
+    show-sql: true
 springdoc:
   swagger-ui:
     path: /swagger-ui.html

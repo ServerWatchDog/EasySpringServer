@@ -1,11 +1,18 @@
 package i.watch.hooks.security.auth
 
-interface ISessionService<T : ISession> {
-    fun getSessionByToken(func: (String) -> String): T
-    fun verify(session: T, permissions: Array<String>): Boolean
+/**
+ * 会话接口
+ *
+ * 对不同接口需要不同的会话做解耦
+ */
+interface ISessionService {
+    /**
+     * 根据 token 获取会话信息
+     */
+    fun getSessionByToken(token: String): ISession
 
-    @Suppress("UNCHECKED_CAST")
-    fun verify0(session: ISession, permissions: Array<String>): Boolean {
-        return verify(session as T, permissions)
-    }
+    /**
+     * 验证此会话是否有权限访问
+     */
+    fun verify(session: ISession, permissions: Array<String>): Boolean
 }

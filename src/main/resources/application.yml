@@ -11,5 +11,6 @@ spring:
     type: redis
   application:
     name: ${global.server.name}
-  flyway:
-    locations: classpath:db
+  jpa:
+    hibernate:
+      ddl-auto: update

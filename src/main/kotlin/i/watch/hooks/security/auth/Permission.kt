@@ -11,7 +11,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement
 )
 annotation class Permission(
     /**
-     * 指定权限，如果未指定权限，则表明允许未登陆会话
+     * 指定权限，如果未指定权限，则表明此接口只要求登录就行
      */
     val permissions: Array<String> = []
 )
