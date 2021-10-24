@@ -11,6 +11,10 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement
 )
 annotation class Permission(
     /**
+     * 接口标记
+     */
+    val tag: String,
+    /**
      * 指定权限，如果未指定权限，则表明此接口只要求登录就行
      */
     val permissions: Array<String> = []
