@@ -1,5 +1,6 @@
 package i.watch.handler.config
 
+import i.watch.handler.config.properties.SoftConfigProperties
 import i.watch.utils.RedisUtils
 import i.watch.utils.SnowFlakeUtils
 import org.springframework.context.annotation.Bean
@@ -15,7 +16,10 @@ class BeanConfiguration {
     fun idGenerate() = SnowFlakeUtils(0, 1L)
 
     @Bean
-    fun redisUtils(redisTemplate: RedisTemplate<String, String>): RedisUtils {
-        return RedisUtils(redisTemplate)
+    fun redisUtils(
+        redisTemplate: RedisTemplate<String, String>,
+        softConfigProperties: SoftConfigProperties
+    ): RedisUtils {
+        return RedisUtils(redisTemplate, softConfigProperties.name)
     }
 }

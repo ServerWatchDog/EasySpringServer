@@ -31,7 +31,7 @@ class InstallServiceImpl(
         if (!installed) {
             logger.error("项目未安装.")
             val token = TokenUtils.randomToken("inst")
-            redisUtils.initMap(key = "installer::$token").expire(1, TimeUnit.DAYS)
+            redisUtils.initMap(key = "session:installer:$token").expire(1, TimeUnit.DAYS)
             println(
                 """
   ==============================================================
@@ -50,7 +50,7 @@ class InstallServiceImpl(
     }
 
     override fun getSession(token: String): InstallerSession {
-        return InstallerSession(redisUtils.withMap("installer::$token"))
+        return InstallerSession(redisUtils.withMap("session:installer:$token"))
     }
 
     override fun verifySession(session: InstallerSession, permissions: Array<String>): Boolean {

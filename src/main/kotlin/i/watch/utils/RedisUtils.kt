@@ -12,22 +12,31 @@ import kotlin.reflect.KClass
 import kotlin.reflect.full.isSubclassOf
 
 class RedisUtils(
-    private val rawRedisTemplate: RedisTemplate<String, String>
+    private val rawRedisTemplate: RedisTemplate<String, String>,
+    private val name: String = ""
 ) {
     @Resource(name = "redisJacksonManager")
     private lateinit var objectManager: ObjectMapper
 
+    private fun wrapKey(key: String): String {
+        return if (name.isNotBlank()) {
+            "$name:$key"
+        } else {
+            key
+        }
+    }
+
     fun withMap(key: String): RedisMapUtils {
-        return RedisMapUtils(rawRedisTemplate, objectManager, key)
+        return RedisMapUtils(rawRedisTemplate, objectManager, wrapKey(key))
     }
 
     fun dropMap(key: String) {
-        rawRedisTemplate.delete(key)
+        rawRedisTemplate.delete(wrapKey(key))
     }
 
     fun initMap(key: String): RedisMapUtils {
         if (rawRedisTemplate.opsForHash<String, String>().putIfAbsent(
-                key, "_init",
+                wrapKey(key), "_init",
                 LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
             ).not()
         ) {
