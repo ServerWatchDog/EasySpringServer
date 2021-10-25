@@ -5,6 +5,9 @@ import org.springframework.stereotype.Component
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.reflect.KClass
 
+/**
+ *  带缓存的 Spring Bean 加载器
+ */
 @Component
 class CachedBeanLoader(private val applicationContext: ApplicationContext) {
     private val map: MutableMap<String, ISessionService> = ConcurrentHashMap(10)

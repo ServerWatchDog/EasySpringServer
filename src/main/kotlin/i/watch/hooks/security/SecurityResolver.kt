@@ -1,12 +1,10 @@
 package i.watch.hooks.security
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.github.open_edgn.security4k.asymmetric.rsa.RsaPrivate
-import com.github.open_edgn.security4k.asymmetric.universal.IPrivateKey
-import i.watch.config.properties.EncryptProperties
 import i.watch.hooks.error.BadRequestException
 import i.watch.hooks.security.dec.CryptRequestBody
 import i.watch.hooks.security.dec.EncryptView
+import i.watch.modules.global.service.ISoftInfoService
 import i.watch.utils.getLogger
 import org.springframework.core.MethodParameter
 import org.springframework.stereotype.Component
@@ -22,7 +20,7 @@ import javax.annotation.Resource
  */
 @Component
 class SecurityResolver(
-    private val encryptProperties: EncryptProperties
+    private val softConfigService: ISoftInfoService
 ) : HandlerMethodArgumentResolver {
     @Resource(name = "redisJacksonManager")
     private lateinit var objectManager: ObjectMapper
@@ -32,7 +30,6 @@ class SecurityResolver(
         return parameter.hasParameterAnnotation(CryptRequestBody::class.java)
     }
 
-    @Suppress("REDUNDANT_ELSE_IN_WHEN")
     override fun resolveArgument(
         parameter: MethodParameter,
         mavContainer: ModelAndViewContainer?,
@@ -40,16 +37,11 @@ class SecurityResolver(
         binderFactory: WebDataBinderFactory?
     ): Any? {
         val nativeRequest = webRequest.getNativeRequest(ContentCachingRequestWrapper::class.java)
-            ?: throw BadRequestException("格式不合法！") // TODO: 抛出可能错误
+            ?: throw BadRequestException("格式不合法！") // TODO: 抛出类型可能错误
         return try {
             val data = nativeRequest.contentAsByteArray.toString(Charsets.UTF_8)
             val encryptView = objectManager.readValue(data, EncryptView::class.java)
-            val privateKey: IPrivateKey = when (encryptView.type) {
-                EncryptView.EncryptType.RSA -> {
-                    RsaPrivate(encryptProperties.privateKey)
-                }
-                else -> throw RuntimeException("不支持的解密算法.")
-            }
+            val privateKey = softConfigService.getPrivateKey(encryptView.type)
             val decodeText = privateKey.decodeText(encryptView.cipher)
             objectManager.readValue(decodeText, parameter.parameter.type)
         } catch (e: Exception) {

@@ -43,7 +43,7 @@ class AuthorityInterceptor(private val cachedContext: CachedBeanLoader) : Handle
             sessionService.getSessionByToken(token)
         } catch (e: NullPointerException) {
             logger.debug("Token {} 未找到.", token, e)
-            throw ForbiddenException("Token 不存在.")
+            throw ForbiddenException("Token 已过期.")
         }
 
         session.refresh()
