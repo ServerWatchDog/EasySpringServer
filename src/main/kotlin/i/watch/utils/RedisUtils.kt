@@ -1,9 +1,8 @@
 package i.watch.utils
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import i.watch.hooks.security.auth.ISession
+import i.watch.handler.security.session.ISession
 import org.springframework.data.redis.core.RedisTemplate
-import org.springframework.stereotype.Component
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Optional
@@ -12,16 +11,18 @@ import javax.annotation.Resource
 import kotlin.reflect.KClass
 import kotlin.reflect.full.isSubclassOf
 
-@Component
 class RedisUtils(
     private val rawRedisTemplate: RedisTemplate<String, String>
-
 ) {
     @Resource(name = "redisJacksonManager")
     private lateinit var objectManager: ObjectMapper
 
     fun withMap(key: String): RedisMapUtils {
         return RedisMapUtils(rawRedisTemplate, objectManager, key)
+    }
+
+    fun dropMap(key: String) {
+        rawRedisTemplate.delete(key)
     }
 
     fun initMap(key: String): RedisMapUtils {
@@ -111,6 +112,12 @@ class RedisUtils(
                     .put(mapKey, key, func())
 
                 data
+            }
+        }
+
+        fun delete(key: String): Boolean {
+            return checkExists {
+                it.opsForHash<String, String>().delete(mapKey, key) != 0L
             }
         }
 

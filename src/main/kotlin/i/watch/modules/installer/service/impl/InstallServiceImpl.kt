@@ -1,7 +1,7 @@
 package i.watch.modules.installer.service.impl
 
-import i.watch.hooks.security.auth.ISessionService.GenericISessionService
-import i.watch.modules.global.repository.ConfigRepository
+import i.watch.handler.security.session.ISessionService.GenericISessionService
+import i.watch.modules.config.service.IConfigService
 import i.watch.modules.installer.model.view.InstallInitResultView
 import i.watch.modules.installer.model.view.InstallInitView
 import i.watch.modules.installer.service.InstallService
@@ -16,11 +16,11 @@ import java.util.concurrent.TimeUnit
 @Service("AUTH:inst")
 class InstallServiceImpl(
     private val redisUtils: RedisUtils,
-    private val configRepository: ConfigRepository
+    private val configService: IConfigService
 ) : GenericISessionService<InstallerSession>, InstallService {
 
     override val installed: Boolean by lazy {
-        configRepository.getByKey(INSTALL_FINISH_KEY).isPresent
+        configService.getString(INSTALL_FINISH_KEY).isPresent
     }
 
     override fun install(init: InstallInitView): InstallInitResultView {
