@@ -1,6 +1,6 @@
-package i.watch.modules.installer.hooks
+package i.watch.modules.install.hooks
 
-import i.watch.modules.installer.service.InstallService
+import i.watch.modules.install.service.InstallService
 import org.springframework.boot.ApplicationArguments
 import org.springframework.boot.ApplicationRunner
 import org.springframework.stereotype.Component

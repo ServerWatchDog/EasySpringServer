@@ -1,4 +1,4 @@
-package i.watch.modules.installer.model.view
+package i.watch.modules.install.model.view
 
 data class InstallInitView(
     val email: String,

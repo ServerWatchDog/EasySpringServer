@@ -1,9 +1,9 @@
-package i.watch.modules.installer.controller
+package i.watch.modules.install.controller
 
 import i.watch.handler.security.encrypt.CryptRequestBody
-import i.watch.modules.installer.model.tag.InstallPermission
-import i.watch.modules.installer.model.view.InstallInitView
-import i.watch.modules.installer.service.InstallService
+import i.watch.modules.install.model.tag.InstallPermission
+import i.watch.modules.install.model.view.InstallInitView
+import i.watch.modules.install.service.InstallService
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController

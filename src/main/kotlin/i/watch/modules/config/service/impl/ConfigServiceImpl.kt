@@ -1,6 +1,7 @@
 package i.watch.modules.config.service.impl
 
 import i.watch.handler.config.properties.SoftConfigProperties
+import i.watch.modules.config.model.db.ConfigEntity
 import i.watch.modules.config.repository.ConfigRepository
 import i.watch.modules.config.service.IConfigService
 import i.watch.utils.RedisUtils
@@ -47,5 +48,33 @@ class ConfigServiceImpl(
         return configContainer.get<String>("boolean::$key").or {
             configRepository.getByKey(key).map { it.value }
         }.map { it.toBoolean() }
+    }
+
+    override fun setInt(key: String, data: Int): Optional<Int> {
+        val old = getInt(key)
+        configContainer.delete("int::$key")
+        configRepository.saveAndFlush(ConfigEntity(key, data.toString()))
+        return old
+    }
+
+    override fun setLong(key: String, data: Long): Optional<Long> {
+        val old = getLong(key)
+        configContainer.delete("long::$key")
+        configRepository.saveAndFlush(ConfigEntity(key, data.toString()))
+        return old
+    }
+
+    override fun setString(key: String, data: Int): Optional<String> {
+        val old = getString(key)
+        configContainer.delete("string::$key")
+        configRepository.saveAndFlush(ConfigEntity(key, data.toString()))
+        return old
+    }
+
+    override fun setBoolean(key: String, data: Int): Optional<Boolean> {
+        val old = getBoolean(key)
+        configContainer.delete("boolean::$key")
+        configRepository.saveAndFlush(ConfigEntity(key, data.toString()))
+        return old
     }
 }

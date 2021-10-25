@@ -1,4 +1,4 @@
-package i.watch.modules.installer.model.tag
+package i.watch.modules.install.model.tag
 
 import i.watch.handler.security.session.Permission
 

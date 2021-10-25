@@ -8,6 +8,9 @@ import org.springframework.http.server.ServerHttpResponse
 import org.springframework.web.bind.annotation.RestControllerAdvice
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice
 
+/**
+ * 错误消息包装
+ */
 @RestControllerAdvice
 class ControllerBodyAdvice : ResponseBodyAdvice<Any> {
     override fun supports(returnType: MethodParameter, converterType: Class<out HttpMessageConverter<*>>): Boolean {

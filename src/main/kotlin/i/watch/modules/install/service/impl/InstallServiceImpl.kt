@@ -1,10 +1,10 @@
-package i.watch.modules.installer.service.impl
+package i.watch.modules.install.service.impl
 
 import i.watch.handler.security.session.ISessionService.GenericISessionService
 import i.watch.modules.config.service.IConfigService
-import i.watch.modules.installer.model.view.InstallInitResultView
-import i.watch.modules.installer.model.view.InstallInitView
-import i.watch.modules.installer.service.InstallService
+import i.watch.modules.install.model.view.InstallInitResultView
+import i.watch.modules.install.model.view.InstallInitView
+import i.watch.modules.install.service.InstallService
 import i.watch.utils.RedisUtils
 import i.watch.utils.TokenUtils
 import i.watch.utils.getLogger

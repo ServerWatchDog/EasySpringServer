@@ -8,6 +8,9 @@ import org.springframework.stereotype.Component
 
 @Component
 class BeanConfiguration {
+    /**
+     *  雪花 ID 生成器
+     */
     @Bean
     fun idGenerate() = SnowFlakeUtils(0, 1L)
 

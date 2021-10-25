@@ -1,4 +1,4 @@
-package i.watch.modules.installer.service.impl
+package i.watch.modules.install.service.impl
 
 import i.watch.utils.RedisUtils
 import java.util.concurrent.TimeUnit
