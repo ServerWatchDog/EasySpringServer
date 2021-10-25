@@ -7,7 +7,7 @@ import javax.persistence.Table
 
 @Entity
 @Table(name = "t_config")
-data class ConfigEntity(
+class ConfigEntity(
     @Id
     @Column(name = "t_key", nullable = false)
     val key: String,
