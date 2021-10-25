@@ -21,7 +21,7 @@ import kotlin.reflect.full.isSubclassOf
  * 会话信息注入
  */
 @Component
-class SessionInfoResolver(
+class SessionResolver(
     private val cachedContext: CachedBeanLoader
 ) : HandlerMethodArgumentResolver {
     private val logger = getLogger()
@@ -40,7 +40,7 @@ class SessionInfoResolver(
             webRequest.getHeader(it)
                 ?: throw RuntimeException("此处不应该为 NULL")
         }
-        val tokenType = TokenUtils.getTokenHeader(token)
+        val tokenType = TokenUtils.getTokenHeader(token).trim()
         val permission =
             AnnotatedElementUtils
                 .findMergedAnnotation(parameter.annotatedElement, Permission::class.java)

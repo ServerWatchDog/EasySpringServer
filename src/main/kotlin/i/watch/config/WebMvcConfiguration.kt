@@ -1,9 +1,13 @@
 package i.watch.config
 
 import i.watch.config.properties.SoftConfigProperties
+import i.watch.hooks.RequestJsonFilter
 import i.watch.hooks.security.AuthorityInterceptor
-import i.watch.hooks.security.SessionInfoResolver
+import i.watch.hooks.security.SecurityResolver
+import i.watch.hooks.security.SessionResolver
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.boot.web.servlet.FilterRegistrationBean
+import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.web.method.support.HandlerMethodArgumentResolver
 import org.springframework.web.servlet.config.annotation.CorsRegistry
@@ -13,7 +17,9 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 @Configuration
 class WebMvcConfiguration(
     private val authorityInterceptor: AuthorityInterceptor,
-    private val sessionInfoResolver: SessionInfoResolver,
+    private val sessionResolver: SessionResolver,
+    private val securityResolver: SecurityResolver,
+    private val jsonFilter: RequestJsonFilter,
     private val softConfigProperties: SoftConfigProperties
 ) : WebMvcConfigurer {
 
@@ -32,8 +38,20 @@ class WebMvcConfiguration(
     }
 
     override fun addArgumentResolvers(resolvers: MutableList<HandlerMethodArgumentResolver>) {
-        resolvers.add(sessionInfoResolver)
+        resolvers.add(sessionResolver)
+        resolvers.add(securityResolver)
         super.addArgumentResolvers(resolvers)
+    }
+
+    @Bean
+    fun jsonFilterRegister(): FilterRegistrationBean<*> {
+        return FilterRegistrationBean<RequestJsonFilter>().apply {
+            filter = jsonFilter
+            addUrlPatterns("/*")
+            setName("requestJsonFilter")
+            isEnabled = true
+            order = 1
+        }
     }
 
     override fun addCorsMappings(registry: CorsRegistry) {

@@ -15,4 +15,19 @@ interface ISessionService {
      * 验证此会话是否有权限访问
      */
     fun verify(session: ISession, permissions: Array<String>): Boolean
+
+    interface GenericISessionService<T : ISession> : ISessionService {
+        override fun getSessionByToken(token: String): ISession {
+            return getSession(token)
+        }
+
+        fun getSession(token: String): T
+
+        fun verifySession(session: T, permissions: Array<String>): Boolean
+
+        @Suppress("UNCHECKED_CAST")
+        override fun verify(session: ISession, permissions: Array<String>): Boolean {
+            return verifySession(session as T, permissions)
+        }
+    }
 }

@@ -24,3 +24,9 @@ springdoc:
 global:
   server:
     dev: true
+    encrypt:
+      type: RSA
+logging:
+  level:
+    i:
+      watch: DEBUG

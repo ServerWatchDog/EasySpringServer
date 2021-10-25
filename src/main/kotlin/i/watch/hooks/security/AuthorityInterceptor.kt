@@ -28,7 +28,7 @@ class AuthorityInterceptor(private val cachedContext: CachedBeanLoader) : Handle
             request.getHeader(header) ?: throw ForbiddenException("需要 Token.")
         }
         val sessionService = try {
-            val tokenType = TokenUtils.getTokenHeader(token)
+            val tokenType = TokenUtils.getTokenHeader(token).trim()
             if (tokenType != permission.tag) {
                 throw ForbiddenException("Token 不适用此接口.")
             }

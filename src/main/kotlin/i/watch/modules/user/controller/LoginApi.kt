@@ -15,7 +15,7 @@ import javax.validation.Valid
 
 @Tag(name = "用户登录/注册", description = "使用此 API 进行登录、注册")
 @RestController
-@RequestMapping("/view/user")
+@RequestMapping("\${global.server.api}/view/user")
 interface LoginApi {
     @Operation(
         summary = "用户登录",
