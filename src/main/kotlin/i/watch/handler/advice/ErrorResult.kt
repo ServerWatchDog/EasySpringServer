@@ -1,4 +1,4 @@
-package i.watch.handler.error
+package i.watch.handler.advice
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import org.springframework.http.HttpStatus

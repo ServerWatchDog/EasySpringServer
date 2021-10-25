@@ -1,4 +1,4 @@
-package i.watch.handler.error
+package i.watch.handler.advice
 
 import i.watch.utils.getLogger
 import org.springframework.http.HttpStatus

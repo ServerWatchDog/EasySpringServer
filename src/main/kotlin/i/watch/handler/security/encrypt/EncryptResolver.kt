@@ -1,7 +1,7 @@
 package i.watch.handler.security.encrypt
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import i.watch.handler.error.BadRequestException
+import i.watch.handler.advice.BadRequestException
 import i.watch.modules.info.service.IInfoService
 import i.watch.utils.getLogger
 import org.springframework.core.MethodParameter

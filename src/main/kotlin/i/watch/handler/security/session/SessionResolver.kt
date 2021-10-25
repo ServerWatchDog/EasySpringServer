@@ -1,6 +1,6 @@
 package i.watch.handler.security.session
 
-import i.watch.handler.error.ForbiddenException
+import i.watch.handler.advice.ForbiddenException
 import i.watch.utils.TokenUtils
 import i.watch.utils.getLogger
 import org.springframework.core.MethodParameter

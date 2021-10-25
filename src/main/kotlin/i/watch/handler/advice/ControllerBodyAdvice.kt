@@ -1,4 +1,4 @@
-package i.watch.handler.error
+package i.watch.handler.advice
 
 import org.springframework.core.MethodParameter
 import org.springframework.http.MediaType
