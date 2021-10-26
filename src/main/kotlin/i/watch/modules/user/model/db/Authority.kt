@@ -13,5 +13,8 @@ enum class Authority(
     val details: String,
 ) {
     CONSOLE_LOGIN("控制台登录权限"),
-    NODE_LOGIN("控制台登录权限"),
+}
+
+enum class AuthorityGroup(vararg authority: Authority) {
+    ADMIN(Authority.CONSOLE_LOGIN)
 }

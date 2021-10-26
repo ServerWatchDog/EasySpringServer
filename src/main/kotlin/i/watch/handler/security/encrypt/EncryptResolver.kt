@@ -18,7 +18,7 @@ import javax.annotation.Resource
  */
 @Component
 class EncryptResolver(
-    private val softConfigService: IInfoService
+    private val infoService: IInfoService
 ) : HandlerMethodArgumentResolver {
     @Resource(name = "redisJacksonManager")
     private lateinit var objectManager: ObjectMapper
@@ -36,16 +36,20 @@ class EncryptResolver(
         binderFactory: WebDataBinderFactory?
     ): Any? {
         val nativeRequest = webRequest.getNativeRequest(ContentCachingRequestWrapper::class.java)
-            ?: throw BadRequestException("格式不合法！") // TODO: 抛出类型可能错误
+            ?: throw BadRequestException("请求体格式不合法.") // TODO: 抛出类型可能错误
         return try {
+            if (nativeRequest.contentAsByteArray.isEmpty()) {
+                nativeRequest.inputStream.readAllBytes() // InputStream 未被处理
+            }
             val data = nativeRequest.contentAsByteArray.toString(Charsets.UTF_8)
             val encryptView = objectManager.readValue(data, EncryptView::class.java)
-            val privateKey = softConfigService.getPrivateKey(encryptView.type)
+            val privateKey = infoService.getPrivateKey(encryptView.type)
             val decodeText = privateKey.decodeText(encryptView.cipher)
             objectManager.readValue(decodeText, parameter.parameter.type)
         } catch (e: Exception) {
-            logger.debug("解析错误！", e)
-            throw BadRequestException("格式不合法！")
+            logger.debug("对请求体解密时发生错误.", e)
+            logger.debug("请求体:\r\n{}", nativeRequest.contentAsByteArray.toString(Charsets.UTF_8))
+            throw BadRequestException("请求体格式不合法.")
         }
     }
 }

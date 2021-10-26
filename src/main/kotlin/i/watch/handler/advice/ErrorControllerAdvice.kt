@@ -2,6 +2,7 @@ package i.watch.handler.advice
 
 import i.watch.utils.getLogger
 import org.springframework.http.HttpStatus
+import org.springframework.web.HttpMediaTypeNotSupportedException
 import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
@@ -30,6 +31,12 @@ class ErrorControllerAdvice {
     fun exceptionAdvice(error: Exception): ErrorResult {
         logger.error("服务器内部错误.", error)
         return ErrorResult(HttpStatus.INTERNAL_SERVER_ERROR, message = "INTERNAL_SERVER_ERROR")
+    }
+
+    @ExceptionHandler(HttpMediaTypeNotSupportedException::class)
+    fun mediaTypeNotSupportedExceptionAdvice(error: HttpMediaTypeNotSupportedException): ErrorResult {
+        logger.error("请求格式错误.", error)
+        return ErrorResult(HttpStatus.BAD_REQUEST, message = "请求体不合法.")
     }
 
     @ExceptionHandler(MethodArgumentNotValidException::class)

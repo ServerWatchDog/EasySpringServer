@@ -36,7 +36,7 @@ class InstallServiceImpl(
                 """
   ==============================================================
                            安 装
-  安装密钥: $token 
+  安装密钥: $token
   
   注意，此密钥仅在 1 天内 (${
                 LocalDateTime.now().plusDays(1)
@@ -44,7 +44,7 @@ class InstallServiceImpl(
                 } 之前) 有效
   
   ==============================================================
-            """.trimMargin()
+                """.trimIndent()
             )
         }
     }

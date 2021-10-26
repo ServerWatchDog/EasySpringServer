@@ -4,13 +4,20 @@ import java.time.LocalDateTime
 import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.Id
+import javax.persistence.Index
 import javax.persistence.JoinColumn
 import javax.persistence.ManyToOne
 import javax.persistence.Table
 import javax.validation.constraints.Email
 
 @Entity
-@Table(name = "t_user")
+@Table(
+    name = "t_user",
+    indexes = [
+        Index(columnList = "email"),
+        Index(columnList = "name")
+    ]
+)
 class UserEntity(
     @Id
     @Column(name = "t_id", nullable = false)

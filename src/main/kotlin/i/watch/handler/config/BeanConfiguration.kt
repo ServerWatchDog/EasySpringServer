@@ -1,6 +1,7 @@
 package i.watch.handler.config
 
 import i.watch.handler.config.properties.SoftConfigProperties
+import i.watch.utils.HashUtils
 import i.watch.utils.RedisUtils
 import i.watch.utils.SnowFlakeUtils
 import org.springframework.context.annotation.Bean
@@ -22,4 +23,9 @@ class BeanConfiguration {
     ): RedisUtils {
         return RedisUtils(redisTemplate, softConfigProperties.name)
     }
+
+    @Bean
+    fun hashUtils(
+        softConfigProperties: SoftConfigProperties
+    ) = HashUtils(saltCode = softConfigProperties.name)
 }
