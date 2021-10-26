@@ -27,7 +27,6 @@ repositories {
 }
 
 dependencies {
-    implementation("com.auth0:java-jwt:3.18.2")
     implementation("org.springdoc:springdoc-openapi-ui:1.5.10")
     implementation("org.springdoc:springdoc-openapi-webmvc-core:1.5.10")
     implementation("org.springdoc:springdoc-openapi-kotlin:1.5.10")

@@ -11,4 +11,5 @@ interface IUserService {
      */
     fun tryLogin(loginView: LoginView): LoginResultView
     fun tryRegister(registerView: RegisterView): RegisterResultView
+    fun getUserAuthorities(userId: Long): List<String>
 }

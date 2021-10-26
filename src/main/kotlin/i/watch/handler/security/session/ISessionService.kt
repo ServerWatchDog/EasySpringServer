@@ -1,5 +1,7 @@
 package i.watch.handler.security.session
 
+import java.util.Optional
+
 /**
  * 会话接口
  *
@@ -16,12 +18,15 @@ interface ISessionService {
      */
     fun verify(session: ISession, permissions: Array<String>): Boolean
 
+    /**
+     * 带Session 类型转换的 SessionServer 对象
+     */
     interface GenericISessionService<T : ISession> : ISessionService {
         override fun getSessionByToken(token: String): ISession {
-            return getSession(token)
+            return getSession(token).orElseThrow { throw NullPointerException() }
         }
 
-        fun getSession(token: String): T
+        fun getSession(token: String): Optional<T>
 
         fun verifySession(session: T, permissions: Array<String>): Boolean
 

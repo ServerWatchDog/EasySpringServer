@@ -3,7 +3,9 @@ package i.watch.modules.config.service.impl
 import i.watch.modules.config.model.db.ConfigEntity
 import i.watch.modules.config.repository.ConfigRepository
 import i.watch.modules.config.service.IConfigService
-import i.watch.utils.RedisUtils
+import i.watch.utils.cache.LightDB
+import i.watch.utils.cache.LightDBMap
+import i.watch.utils.cache.get
 import org.springframework.stereotype.Service
 import java.util.Optional
 
@@ -12,16 +14,16 @@ import java.util.Optional
  */
 @Service
 class ConfigServiceImpl(
-    redisUtils: RedisUtils,
+    lightDB: LightDB,
     private val configRepository: ConfigRepository
 ) : IConfigService {
 
-    private var configContainer: RedisUtils.RedisMapUtils
+    private var configContainer: LightDBMap
 
     init {
         val key = "config"
-        redisUtils.dropMap(key)
-        this.configContainer = redisUtils.initMap(key)
+        lightDB.drop(key)
+        this.configContainer = lightDB.createMap(key)
     }
 
     override fun getInt(key: String): Optional<Int> {
