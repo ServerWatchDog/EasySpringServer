@@ -2,13 +2,13 @@ package i.watch.handler.inject.config
 
 import i.watch.utils.getLogger
 import org.slf4j.MarkerFactory
-import org.springframework.cglib.proxy.InvocationHandler
-import org.springframework.cglib.proxy.Proxy
 import org.springframework.context.ApplicationContext
 import org.springframework.core.annotation.AnnotationUtils
+import java.lang.reflect.InvocationHandler
 import java.lang.reflect.Method
+import java.lang.reflect.Proxy
 import kotlin.reflect.KClass
-import kotlin.reflect.full.declaredMemberProperties
+import kotlin.reflect.jvm.kotlinFunction
 
 class ConfigProxyFactory(
     private val superClass: KClass<out Any>,
@@ -20,15 +20,11 @@ class ConfigProxyFactory(
     init {
         val softConfig = AnnotationUtils.findAnnotation(superClass.java, SoftConfig::class.java)
             ?: throw RuntimeException("未找到类 $superClass 下 SoftConfig 注解.")
-        logger.debug(marker, "{}", superClass.declaredMemberProperties)
     }
 
-    override fun invoke(p0: Any?, p1: Method?, p2: Array<out Any>?): Any {
+    override fun invoke(p0: Any, p1: Method, p2: Array<out Any>?): Any {
         getLogger().apply {
-            info("{}", p0?.javaClass)
-            info("{}", p1)
-            info("{}", p2)
-            info("注入成功！")
+            p1.kotlinFunction
         }
         return "Inject"
     }

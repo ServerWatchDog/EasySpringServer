@@ -3,6 +3,7 @@ package i.watch.modules.user.service.impl
 import com.j256.twofactorauth.TimeBasedOneTimePasswordUtil
 import com.querydsl.jpa.impl.JPAQueryFactory
 import i.watch.handler.advice.BadRequestException
+import i.watch.modules.user.config.UserConfig
 import i.watch.modules.user.model.db.QAuthorityEntity
 import i.watch.modules.user.model.db.QGroupEntity
 import i.watch.modules.user.model.db.QUserEntity
@@ -25,8 +26,8 @@ class UserServiceImpl(
     private val hashUtils: HashUtils,
     private val applicationContext: ApplicationContext
 ) : IUserService {
-//    @Resource
-//    private lateinit var userConfig: UserConfig
+    @Resource
+    private lateinit var userConfig: UserConfig
 
     @Resource
     private lateinit var userSessionService: IUserSessionService
@@ -65,8 +66,7 @@ class UserServiceImpl(
     }
 
     override fun tryRegister(registerView: RegisterView): RegisterResultView {
-        applicationContext
-//        println(userConfig.defaultUserId)
+        println(userConfig.defaultUserId)
         TODO()
     }
 
