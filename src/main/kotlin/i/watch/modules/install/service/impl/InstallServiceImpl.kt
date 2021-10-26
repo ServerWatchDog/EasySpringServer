@@ -61,6 +61,6 @@ class InstallServiceImpl(
 
     companion object {
         private val logger = getLogger()
-        const val INSTALL_FINISH_KEY = "install.finish"
+        const val INSTALL_FINISH_KEY = "global.install.finish"
     }
 }

@@ -11,7 +11,6 @@ import javax.persistence.Table
  * 权限表
  *
  * @property id Int 权限 ID
- * @property name String 权限名称
  * @property details String 权限详情
  * @constructor
  */

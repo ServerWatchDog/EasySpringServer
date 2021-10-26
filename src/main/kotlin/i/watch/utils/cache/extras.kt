@@ -15,54 +15,43 @@ inline fun <reified T : Any> LightDBMap.get(key: String): Optional<T> {
  *提供到 LightDB Map  数据绑定
  */
 fun <RES : Any> LightDBMap.bind(
-    key: String = "",
+    key: String,
     bindClass: KClass<RES>,
     emptyElse: (String) -> RES = { throw NullPointerException("未找到名为 $it 的字段.") }
 ): ReadWriteProperty<Any?, RES> =
     object : ReadWriteProperty<Any?, RES> {
         override fun getValue(thisRef: Any?, property: KProperty<*>): RES {
-            val name = key.ifBlank {
-                property.name
-            }
-            return this@bind.get(name, bindClass).orElse(emptyElse(name))
+            return this@bind.get(key, bindClass).orElse(emptyElse(key))
         }
 
         override fun setValue(thisRef: Any?, property: KProperty<*>, value: RES) {
-            if (key.isBlank()) {
-                this@bind.putValue(property.name, value)
-            } else {
-                this@bind.putValue(key, value)
-            }
+            this@bind.putValue(key, value)
         }
     }
 
 inline fun <reified RES : Any> LightDBMap.bind(
-    key: String = ""
+    key: String
 ) = bind(key, RES::class)
 
 inline fun <reified RES : Any> LightDBMap.bind(
-    key: String = "",
+    key: String,
     default: RES
 ) =
     bind(
         key, RES::class
     ) { default }
 
-inline fun <reified RES : Any> LightDBMap.readOnlyBind(key: String = "") = readOnlyBind(key, RES::class)
+inline fun <reified RES : Any> LightDBMap.readOnlyBind(key: String) = readOnlyBind(key, RES::class)
 
 /**
  *提供到 LightDB Map  数据绑定
  */
 fun <RES : Any> LightDBMap.readOnlyBind(
-    key: String = "",
+    key: String,
     bindClass: KClass<RES>
 ) =
-    ReadOnlyProperty<Any?, Optional<RES>> { _, property ->
-        if (key.isBlank()) {
-            this@readOnlyBind.get(property.name, bindClass)
-        } else {
-            this@readOnlyBind.get(key, bindClass)
-        }
+    ReadOnlyProperty<Any?, Optional<RES>> { _, _ ->
+        this@readOnlyBind.get(key, bindClass)
     }
 
 /**

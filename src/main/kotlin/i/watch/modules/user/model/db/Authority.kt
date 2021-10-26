@@ -6,7 +6,6 @@ package i.watch.modules.user.model.db
  *
  *
  * @property details String 权限解释
- * @property depends Array<Authority> 权限依赖 （启用此权限则表明依赖权限会生效）
  * @constructor
  */
 enum class Authority(

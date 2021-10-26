@@ -7,8 +7,6 @@ global:
 spring:
   profiles:
     active: prod
-  cache:
-    type: redis
   application:
     name: ${global.server.name}
   jpa:

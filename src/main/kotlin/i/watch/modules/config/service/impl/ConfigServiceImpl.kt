@@ -8,6 +8,8 @@ import i.watch.utils.cache.LightDBMap
 import i.watch.utils.cache.get
 import org.springframework.stereotype.Service
 import java.util.Optional
+import kotlin.properties.ReadWriteProperty
+import kotlin.reflect.KProperty
 
 /**
  * 带缓存的配置文件加载器
@@ -64,17 +66,57 @@ class ConfigServiceImpl(
         return old
     }
 
-    override fun setString(key: String, data: Int): Optional<String> {
+    override fun setString(key: String, data: String): Optional<String> {
         val old = getString(key)
         configContainer.delete("string:$key")
-        configRepository.saveAndFlush(ConfigEntity(key, data.toString()))
+        configRepository.saveAndFlush(ConfigEntity(key, data))
         return old
     }
 
-    override fun setBoolean(key: String, data: Int): Optional<Boolean> {
+    override fun setBoolean(key: String, data: Boolean): Optional<Boolean> {
         val old = getBoolean(key)
         configContainer.delete("boolean:$key")
         configRepository.saveAndFlush(ConfigEntity(key, data.toString()))
         return old
+    }
+
+    override fun int(key: String, defaultValue: Int) = object : ReadWriteProperty<Any?, Int> {
+        override fun getValue(thisRef: Any?, property: KProperty<*>): Int {
+            return getInt(key).orElse(defaultValue)
+        }
+
+        override fun setValue(thisRef: Any?, property: KProperty<*>, value: Int) {
+            setInt(key, value)
+        }
+    }
+
+    override fun long(key: String, defaultValue: Long) = object : ReadWriteProperty<Any?, Long> {
+        override fun getValue(thisRef: Any?, property: KProperty<*>): Long {
+            return getLong(key).orElse(defaultValue)
+        }
+
+        override fun setValue(thisRef: Any?, property: KProperty<*>, value: Long) {
+            setLong(key, value)
+        }
+    }
+
+    override fun string(key: String, defaultValue: String) = object : ReadWriteProperty<Any?, String> {
+        override fun getValue(thisRef: Any?, property: KProperty<*>): String {
+            return getString(key).orElse(defaultValue)
+        }
+
+        override fun setValue(thisRef: Any?, property: KProperty<*>, value: String) {
+            setString(key, value)
+        }
+    }
+
+    override fun boolean(key: String, defaultValue: Boolean) = object : ReadWriteProperty<Any?, Boolean> {
+        override fun getValue(thisRef: Any?, property: KProperty<*>): Boolean {
+            return getBoolean(key).orElse(defaultValue)
+        }
+
+        override fun setValue(thisRef: Any?, property: KProperty<*>, value: Boolean) {
+            setBoolean(key, value)
+        }
     }
 }
