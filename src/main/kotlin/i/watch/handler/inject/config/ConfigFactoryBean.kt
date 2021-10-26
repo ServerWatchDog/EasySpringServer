@@ -9,10 +9,8 @@ class ConfigFactoryBean<T : Any>(
     private val context: ApplicationContext
 ) : FactoryBean<T> {
 
-    @Suppress("UNCHECKED_CAST")
     override fun getObject(): T {
-        val newMapperProxy = ConfigProxyFactory.newMapperProxy(interfaceClass, context)
-        return newMapperProxy
+        return ConfigInvocationHandler.newMapperProxy(interfaceClass, context)
     }
 
     override fun getObjectType(): Class<*> {

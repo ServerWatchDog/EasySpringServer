@@ -15,7 +15,6 @@ import i.watch.modules.user.service.IUserService
 import i.watch.modules.user.service.IUserSessionService
 import i.watch.utils.HashUtils
 import i.watch.utils.getLogger
-import org.springframework.context.ApplicationContext
 import org.springframework.stereotype.Service
 import java.util.Optional
 import javax.annotation.Resource
@@ -24,10 +23,8 @@ import javax.annotation.Resource
 class UserServiceImpl(
     private val jpaQuery: JPAQueryFactory,
     private val hashUtils: HashUtils,
-    private val applicationContext: ApplicationContext
+    private val userConfig: UserConfig
 ) : IUserService {
-    @Resource
-    private lateinit var userConfig: UserConfig
 
     @Resource
     private lateinit var userSessionService: IUserSessionService
@@ -66,6 +63,7 @@ class UserServiceImpl(
     }
 
     override fun tryRegister(registerView: RegisterView): RegisterResultView {
+//        userConfig.defaultUserId = "12"
         println(userConfig.defaultUserId)
         TODO()
     }

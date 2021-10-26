@@ -6,6 +6,7 @@ import i.watch.utils.HashUtils
 import i.watch.utils.SnowFlakeUtils
 import i.watch.utils.cache.JacksonStringParser
 import i.watch.utils.cache.LightDB
+import i.watch.utils.cache.StringParser
 import i.watch.utils.cache.redis.RedisLightDB
 import org.springframework.context.annotation.Bean
 import org.springframework.data.redis.core.RedisTemplate
@@ -24,13 +25,17 @@ class BeanConfiguration {
     fun idGenerate() = SnowFlakeUtils(0, 1L)
 
     @Bean
+    fun stringParser() = JacksonStringParser(objectManager)
+
+    @Bean
     fun lightDB(
         redisTemplate: RedisTemplate<String, String>,
-        softConfigProperties: SoftConfigProperties
+        softConfigProperties: SoftConfigProperties,
+        stringParser: StringParser
     ): LightDB {
         return RedisLightDB(
             name = softConfigProperties.name,
-            redisTemplate = redisTemplate, stringParser = JacksonStringParser(objectManager)
+            redisTemplate = redisTemplate, stringParser = stringParser
         )
     }
 

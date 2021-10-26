@@ -28,76 +28,26 @@ class ConfigServiceImpl(
         this.configContainer = lightDB.createMap(key)
     }
 
-    override fun getInt(key: String): Optional<Int> {
-        return configContainer.get<String>("int:$key").or {
-            configRepository.getByKey(key).map { it.value }
-        }.map { it.toInt() }
-    }
-
-    override fun getLong(key: String): Optional<Long> {
-        return configContainer.get<String>("long:$key").or {
-            configRepository.getByKey(key).map { it.value }
-        }.map { it.toLong() }
-    }
-
     override fun getString(key: String): Optional<String> {
-        return configContainer.get<String>("string:$key").or {
-            configRepository.getByKey(key).map { it.value }
+        return configContainer.get<String>(key).or {
+            configRepository.getByKey(key).map { configContainer.putValue(key, it.value) }
         }
     }
 
-    override fun getBoolean(key: String): Optional<Boolean> {
-        return configContainer.get<String>("boolean:$key").or {
-            configRepository.getByKey(key).map { it.value }
-        }.map { it.toBoolean() }
-    }
-
-    override fun setInt(key: String, data: Int): Optional<Int> {
-        val old = getInt(key)
-        configContainer.delete("int:$key")
-        configRepository.saveAndFlush(ConfigEntity(key, data.toString()))
-        return old
-    }
-
-    override fun setLong(key: String, data: Long): Optional<Long> {
-        val old = getLong(key)
-        configContainer.delete("long:$key")
-        configRepository.saveAndFlush(ConfigEntity(key, data.toString()))
-        return old
+    override fun getCachedString(key: String, cache: String): Optional<String> {
+        return configContainer.get<String>(key).or {
+            configRepository.getByKey(key)
+                .map { configContainer.putValue(key, it.value) }.or {
+                    Optional.of(configContainer.putValue(key, cache))
+                }
+        }
     }
 
     override fun setString(key: String, data: String): Optional<String> {
         val old = getString(key)
-        configContainer.delete("string:$key")
+        configContainer.delete(key)
         configRepository.saveAndFlush(ConfigEntity(key, data))
         return old
-    }
-
-    override fun setBoolean(key: String, data: Boolean): Optional<Boolean> {
-        val old = getBoolean(key)
-        configContainer.delete("boolean:$key")
-        configRepository.saveAndFlush(ConfigEntity(key, data.toString()))
-        return old
-    }
-
-    override fun int(key: String, defaultValue: Int) = object : ReadWriteProperty<Any?, Int> {
-        override fun getValue(thisRef: Any?, property: KProperty<*>): Int {
-            return getInt(key).orElse(defaultValue)
-        }
-
-        override fun setValue(thisRef: Any?, property: KProperty<*>, value: Int) {
-            setInt(key, value)
-        }
-    }
-
-    override fun long(key: String, defaultValue: Long) = object : ReadWriteProperty<Any?, Long> {
-        override fun getValue(thisRef: Any?, property: KProperty<*>): Long {
-            return getLong(key).orElse(defaultValue)
-        }
-
-        override fun setValue(thisRef: Any?, property: KProperty<*>, value: Long) {
-            setLong(key, value)
-        }
     }
 
     override fun string(key: String, defaultValue: String) = object : ReadWriteProperty<Any?, String> {
@@ -107,16 +57,6 @@ class ConfigServiceImpl(
 
         override fun setValue(thisRef: Any?, property: KProperty<*>, value: String) {
             setString(key, value)
-        }
-    }
-
-    override fun boolean(key: String, defaultValue: Boolean) = object : ReadWriteProperty<Any?, Boolean> {
-        override fun getValue(thisRef: Any?, property: KProperty<*>): Boolean {
-            return getBoolean(key).orElse(defaultValue)
-        }
-
-        override fun setValue(thisRef: Any?, property: KProperty<*>, value: Boolean) {
-            setBoolean(key, value)
         }
     }
 }

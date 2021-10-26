@@ -17,7 +17,7 @@ import org.springframework.stereotype.Component
  * 自定义Bean 解析器
  */
 @Component
-class RegistryPostProcessor : BeanDefinitionRegistryPostProcessor, ApplicationContextAware {
+class ConfigRegistryProcessor : BeanDefinitionRegistryPostProcessor, ApplicationContextAware {
     private val logger = getLogger()
     private lateinit var applicationContext: ApplicationContext
 
