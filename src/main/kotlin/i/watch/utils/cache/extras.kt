@@ -21,7 +21,7 @@ fun <RES : Any> LightDBMap.bind(
 ): ReadWriteProperty<Any?, RES> =
     object : ReadWriteProperty<Any?, RES> {
         override fun getValue(thisRef: Any?, property: KProperty<*>): RES {
-            return this@bind.get(key, bindClass).orElse(emptyElse(key))
+            return this@bind.get(key, bindClass).orElseGet { emptyElse(key) }
         }
 
         override fun setValue(thisRef: Any?, property: KProperty<*>, value: RES) {

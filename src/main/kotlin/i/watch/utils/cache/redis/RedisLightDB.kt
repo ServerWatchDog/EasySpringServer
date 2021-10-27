@@ -52,4 +52,10 @@ class RedisLightDB(
             key
         }
     }
+
+    override fun clearMap(key: String) {
+        // TODO: 存在线程安全性问题
+        drop(key)
+        createMap(key)
+    }
 }

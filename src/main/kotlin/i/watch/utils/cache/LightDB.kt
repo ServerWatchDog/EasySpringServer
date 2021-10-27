@@ -25,4 +25,9 @@ interface LightDB {
      *  删除MAP 实例
      */
     fun drop(key: String): Boolean
+
+    /**
+     * 重新初始化 Map
+     */
+    fun clearMap(key: String)
 }

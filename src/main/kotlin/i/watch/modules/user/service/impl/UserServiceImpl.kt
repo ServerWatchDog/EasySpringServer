@@ -13,12 +13,17 @@ import i.watch.modules.user.model.view.login.LoginResultView
 import i.watch.modules.user.model.view.login.LoginView
 import i.watch.modules.user.model.view.register.RegisterResultView
 import i.watch.modules.user.model.view.register.RegisterView
-import i.watch.modules.user.model.view.user.AllUsersResultView
+import i.watch.modules.user.model.view.user.UserInsertView
+import i.watch.modules.user.model.view.user.UserResultView
+import i.watch.modules.user.model.view.user.UsersResultView
 import i.watch.modules.user.repository.UserRepository
 import i.watch.modules.user.service.IUserService
 import i.watch.modules.user.service.IUserSessionService
 import i.watch.utils.HashUtils
+import i.watch.utils.SimpleResultView
 import i.watch.utils.SnowFlakeUtils
+import i.watch.utils.cache.cache.IDataCacheManager
+import i.watch.utils.cache.cache.cache
 import i.watch.utils.getLogger
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
@@ -32,8 +37,11 @@ class UserServiceImpl(
     private val userRepository: UserRepository,
     private val hashUtils: HashUtils,
     private val userConfig: UserConfig,
-    private val idGenerator: SnowFlakeUtils
+    private val idGenerator: SnowFlakeUtils,
+    private val dataCacheManager: IDataCacheManager
 ) : IUserService {
+
+    private val authorityCache = dataCacheManager.newCache("authority")
 
     @Resource
     private lateinit var userSessionService: IUserSessionService
@@ -106,20 +114,34 @@ class UserServiceImpl(
     }
 
     override fun getUserAuthorities(userId: Long): List<String> {
-        val authorityEntity = QAuthorityEntity.authorityEntity
-        val userEntity = QUserEntity.userEntity
-        val groupEntity = QGroupEntity.groupEntity
-        return jpaQuery.select(authorityEntity.id)
-            .from(userEntity)
-            .leftJoin(groupEntity)
-            .on(userEntity.linkGroup.id.eq(groupEntity.id))
-            .on(userEntity.id.eq(userId))
-            .join(groupEntity.linkedAuthorities, authorityEntity)
-            .groupBy(authorityEntity.id)
-            .fetch()
+        return authorityCache.cache(userId.toString()) {
+            val authorityEntity = QAuthorityEntity.authorityEntity
+            val userEntity = QUserEntity.userEntity
+            val groupEntity = QGroupEntity.groupEntity
+            jpaQuery.select(authorityEntity.id)
+                .from(userEntity)
+                .leftJoin(groupEntity)
+                .on(userEntity.linkGroup.id.eq(groupEntity.id))
+                .on(userEntity.id.eq(userId))
+                .join(groupEntity.linkedAuthorities, authorityEntity)
+                .groupBy(authorityEntity.id)
+                .fetch()
+        }
     }
 
-    override fun getAllUsers(pageable: Pageable): AllUsersResultView {
+    override fun select(pageable: Pageable): UsersResultView {
+        TODO("Not yet implemented")
+    }
+
+    override fun insert(user: UserInsertView): UserResultView {
+        TODO("Not yet implemented")
+    }
+
+    override fun update(userId: Long, user: UserInsertView): UserResultView {
+        TODO("Not yet implemented")
+    }
+
+    override fun delete(userId: Long): SimpleResultView<Boolean> {
         TODO("Not yet implemented")
     }
 }

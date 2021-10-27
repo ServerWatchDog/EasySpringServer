@@ -7,6 +7,8 @@ import i.watch.utils.SnowFlakeUtils
 import i.watch.utils.cache.JacksonStringParser
 import i.watch.utils.cache.LightDB
 import i.watch.utils.cache.StringParser
+import i.watch.utils.cache.cache.DataCacheManager
+import i.watch.utils.cache.cache.IDataCacheManager
 import i.watch.utils.cache.redis.RedisLightDB
 import org.springframework.context.annotation.Bean
 import org.springframework.data.redis.core.RedisTemplate
@@ -27,6 +29,9 @@ class BeanConfiguration {
     @Bean
     fun stringParser() = JacksonStringParser(objectManager)
 
+    /**
+     * 对象缓存相关
+     */
     @Bean
     fun lightDB(
         redisTemplate: RedisTemplate<String, String>,
@@ -39,6 +44,10 @@ class BeanConfiguration {
         )
     }
 
+    @Bean
+    fun dataCacheManager(lightDB: LightDB): IDataCacheManager = DataCacheManager(lightDB)
+
+    // 哈希：密码相关
     @Bean
     fun hashUtils(
         softConfigProperties: SoftConfigProperties
