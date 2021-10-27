@@ -7,6 +7,7 @@ import com.github.open_edgn.security4k.asymmetric.universal.IPublicKey
 import i.watch.handler.security.encrypt.EncryptView
 import i.watch.modules.config.config.GlobalConfig
 import i.watch.modules.info.model.view.EncryptResultView
+import i.watch.modules.info.model.view.SoftwareInfoResultView
 import i.watch.modules.info.service.IInfoService
 import org.springframework.stereotype.Service
 
@@ -32,5 +33,9 @@ class InfoServiceImpl(
                 RsaPrivate(globalConfig.privateKey)
             }
         }
+    }
+
+    override fun getInfo(): SoftwareInfoResultView {
+        return SoftwareInfoResultView(installed = globalConfig.installed, encrypt = encryptInfo())
     }
 }

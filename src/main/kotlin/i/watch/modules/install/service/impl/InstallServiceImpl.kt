@@ -1,6 +1,7 @@
 package i.watch.modules.install.service.impl
 
 import i.watch.handler.security.session.ISessionService.GenericISessionService
+import i.watch.modules.config.config.GlobalConfig
 import i.watch.modules.config.service.IConfigService
 import i.watch.modules.install.model.view.InstallInitResultView
 import i.watch.modules.install.model.view.InstallInitView
@@ -17,19 +18,16 @@ import java.util.concurrent.TimeUnit
 @Service("AUTH:inst")
 class InstallServiceImpl(
     private val lightDB: LightDB,
+    private val globalConfig: GlobalConfig,
     private val configService: IConfigService
 ) : GenericISessionService<InstallerSession>, InstallService {
-
-    override val installed: Boolean by lazy {
-        configService.getString(INSTALL_FINISH_KEY).isPresent
-    }
 
     override fun install(init: InstallInitView): InstallInitResultView {
         TODO("Not yet implemented")
     }
 
     override fun checkInstall() {
-        if (!installed) {
+        if (!globalConfig.installed) {
             logger.error("项目未安装.")
             val token = TokenUtils.randomToken("inst")
             lightDB.createMap(key = "session:installer:$token").expire(1, TimeUnit.DAYS)
@@ -61,6 +59,5 @@ class InstallServiceImpl(
 
     companion object {
         private val logger = getLogger()
-        const val INSTALL_FINISH_KEY = "global.install.finish"
     }
 }

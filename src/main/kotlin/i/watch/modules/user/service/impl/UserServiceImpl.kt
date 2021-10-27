@@ -3,27 +3,36 @@ package i.watch.modules.user.service.impl
 import com.j256.twofactorauth.TimeBasedOneTimePasswordUtil
 import com.querydsl.jpa.impl.JPAQueryFactory
 import i.watch.handler.advice.BadRequestException
+import i.watch.handler.advice.ForbiddenException
 import i.watch.modules.user.config.UserConfig
 import i.watch.modules.user.model.db.QAuthorityEntity
 import i.watch.modules.user.model.db.QGroupEntity
 import i.watch.modules.user.model.db.QUserEntity
-import i.watch.modules.user.model.view.LoginResultView
-import i.watch.modules.user.model.view.LoginView
-import i.watch.modules.user.model.view.RegisterResultView
-import i.watch.modules.user.model.view.RegisterView
+import i.watch.modules.user.model.db.UserEntity
+import i.watch.modules.user.model.view.login.LoginResultView
+import i.watch.modules.user.model.view.login.LoginView
+import i.watch.modules.user.model.view.register.RegisterResultView
+import i.watch.modules.user.model.view.register.RegisterView
+import i.watch.modules.user.model.view.user.AllUsersResultView
+import i.watch.modules.user.repository.UserRepository
 import i.watch.modules.user.service.IUserService
 import i.watch.modules.user.service.IUserSessionService
 import i.watch.utils.HashUtils
+import i.watch.utils.SnowFlakeUtils
 import i.watch.utils.getLogger
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
+import java.time.LocalDateTime
 import java.util.Optional
 import javax.annotation.Resource
 
 @Service
 class UserServiceImpl(
     private val jpaQuery: JPAQueryFactory,
+    private val userRepository: UserRepository,
     private val hashUtils: HashUtils,
-    private val userConfig: UserConfig
+    private val userConfig: UserConfig,
+    private val idGenerator: SnowFlakeUtils
 ) : IUserService {
 
     @Resource
@@ -42,13 +51,17 @@ class UserServiceImpl(
             if (hashUtils.verify(loginView.password, it.password)) {
                 //  密码匹配
                 if (it.twoFactor.isEmpty()) {
-                    LoginResultView(LoginResultView.LoginResultType.SUCCESS, "")
+                    LoginResultView(
+                        LoginResultView.LoginResultType.SUCCESS,
+                        userSessionService.createSessionByUserId(it.id)
+                    )
                 } else {
                     // 两步验证
                     if (TimeBasedOneTimePasswordUtil.generateCurrentNumberString(it.twoFactor)
                         == loginView.code
                     ) {
                         LoginResultView(
+                            // 登录成功
                             LoginResultView.LoginResultType.SUCCESS,
                             userSessionService.createSessionByUserId(it.id)
                         )
@@ -63,9 +76,33 @@ class UserServiceImpl(
     }
 
     override fun tryRegister(registerView: RegisterView): RegisterResultView {
-//        userConfig.defaultUserId = "12"
-        println(userConfig.defaultUserId)
-        TODO()
+        if (!userConfig.allowRegister) {
+            throw BadRequestException("管理员配置不允许注册.")
+        }
+        val exists = QUserEntity.userEntity.let {
+            jpaQuery.selectFrom(it)
+                .where(it.email.eq(registerView.email.lowercase())).fetchCount() != 0L
+        }
+        if (exists) {
+            throw ForbiddenException("此用户已被注册.")
+        }
+        val nextUuid = idGenerator.nextId()
+        val group = jpaQuery
+            .selectFrom(QGroupEntity.groupEntity)
+            .where(QGroupEntity.groupEntity.id.eq(userConfig.defaultGroupId))
+            .fetchOne() ?: throw BadRequestException("管理员配置不允许注册.")
+        userRepository.saveAndFlush(
+            UserEntity(
+                id = nextUuid,
+                email = registerView.email,
+                name = registerView.name,
+                password = hashUtils.create(registerView.password),
+                twoFactor = "",
+                registerTime = LocalDateTime.now(),
+                linkGroup = group
+            )
+        )
+        return RegisterResultView(status = RegisterResultView.RegisterStatus.SUCCESS)
     }
 
     override fun getUserAuthorities(userId: Long): List<String> {
@@ -80,5 +117,9 @@ class UserServiceImpl(
             .join(groupEntity.linkedAuthorities, authorityEntity)
             .groupBy(authorityEntity.id)
             .fetch()
+    }
+
+    override fun getAllUsers(pageable: Pageable): AllUsersResultView {
+        TODO("Not yet implemented")
     }
 }

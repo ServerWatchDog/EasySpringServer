@@ -1,7 +1,7 @@
 package i.watch.modules.user.controller
 
-import i.watch.modules.user.model.view.LoginView
-import i.watch.modules.user.model.view.RegisterView
+import i.watch.modules.user.model.view.login.LoginView
+import i.watch.modules.user.model.view.register.RegisterView
 import i.watch.modules.user.service.IUserService
 import org.springframework.web.bind.annotation.RestController
 

@@ -1,7 +1,8 @@
 global:
   server:
-    name: WatchDog4K
+    name: web-dog # 此名称不要轻易变更！密码加盐使用！
     host: 127.0.0.1
+    data: 127.0.0.1
     api: /api
     dev: false
 spring:

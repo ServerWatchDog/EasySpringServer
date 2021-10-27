@@ -2,6 +2,7 @@ package i.watch.handler.config
 
 import i.watch.handler.config.properties.SoftConfigProperties
 import i.watch.handler.filter.RequestJsonFilter
+import i.watch.handler.inject.page.RestPageResolver
 import i.watch.handler.security.encrypt.EncryptResolver
 import i.watch.handler.security.session.AuthorityInterceptor
 import i.watch.handler.security.session.SessionResolver
@@ -19,6 +20,7 @@ class WebMvcConfiguration(
     private val authorityInterceptor: AuthorityInterceptor,
     private val sessionResolver: SessionResolver,
     private val encryptResolver: EncryptResolver,
+    private val restPageResolver: RestPageResolver,
     private val jsonFilter: RequestJsonFilter,
     private val softConfigProperties: SoftConfigProperties
 ) : WebMvcConfigurer {
@@ -40,6 +42,7 @@ class WebMvcConfiguration(
     override fun addArgumentResolvers(resolvers: MutableList<HandlerMethodArgumentResolver>) {
         resolvers.add(sessionResolver)
         resolvers.add(encryptResolver)
+        resolvers.add(restPageResolver)
         super.addArgumentResolvers(resolvers)
     }
 

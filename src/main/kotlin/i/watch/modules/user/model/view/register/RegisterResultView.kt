@@ -1,4 +1,4 @@
-package i.watch.modules.user.model.view
+package i.watch.modules.user.model.view.register
 
 data class RegisterResultView(
     val status: RegisterStatus

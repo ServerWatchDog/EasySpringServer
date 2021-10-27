@@ -1,15 +1,15 @@
 spring:
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
-    url: jdbc:mariadb://${global.server.host}:3306/watchdog
+    url: jdbc:mariadb://${global.server.data}:3306/watchdog
     username: watchdog
     password: watchdog
   redis:
-    host: ${global.server.host}
+    host: ${global.server.data}
     password: redis
     port: 6379
   rabbitmq:
-    addresses: ${global.server.host}
+    addresses: ${global.server.data}
     username: guest
     password: guest
   jpa:

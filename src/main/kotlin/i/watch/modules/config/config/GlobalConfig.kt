@@ -8,11 +8,14 @@ import i.watch.handler.security.encrypt.EncryptView
 @SoftConfig("global.config")
 interface GlobalConfig : ISoftConfig {
     @SoftConfigColumn(key = "type", defaultEnv = "global.server.encrypt.type")
-    val type: EncryptView.EncryptType
+    var type: EncryptView.EncryptType
 
     @SoftConfigColumn(key = "publicKey", defaultEnv = "global.server.encrypt.public-key")
-    val publicKey: String
+    var publicKey: String
 
     @SoftConfigColumn(key = "privateKey", defaultEnv = "global.server.encrypt.private-key")
-    val privateKey: String
+    var privateKey: String
+
+    @SoftConfigColumn(key = "installed", defaultValue = "false")
+    var installed: Boolean
 }

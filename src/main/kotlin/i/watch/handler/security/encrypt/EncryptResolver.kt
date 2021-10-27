@@ -45,6 +45,7 @@ class EncryptResolver(
             val encryptView = objectManager.readValue(data, EncryptView::class.java)
             val privateKey = infoService.getPrivateKey(encryptView.type)
             val decodeText = privateKey.decodeText(encryptView.cipher)
+            // TODO: @Valid 失效
             objectManager.readValue(decodeText, parameter.parameter.type)
         } catch (e: Exception) {
             logger.debug("对请求体解密时发生错误.", e)

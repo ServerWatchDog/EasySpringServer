@@ -1,10 +1,10 @@
 package i.watch.modules.user.controller
 
 import i.watch.handler.security.encrypt.CryptRequestBody
-import i.watch.modules.user.model.view.LoginResultView
-import i.watch.modules.user.model.view.LoginView
-import i.watch.modules.user.model.view.RegisterResultView
-import i.watch.modules.user.model.view.RegisterView
+import i.watch.modules.user.model.view.login.LoginResultView
+import i.watch.modules.user.model.view.login.LoginView
+import i.watch.modules.user.model.view.register.RegisterResultView
+import i.watch.modules.user.model.view.register.RegisterView
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.http.MediaType

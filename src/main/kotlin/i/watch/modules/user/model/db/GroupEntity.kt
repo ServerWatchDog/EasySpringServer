@@ -14,11 +14,9 @@ import javax.persistence.Table
 class GroupEntity(
     @Id
     @Column(name = "t_id", nullable = false)
-    val id: Int = 0,
+    val id: Long = 0,
     @Column(name = "name", length = 128, nullable = false)
     val name: String,
-    @Column(name = "default_group", length = 128, nullable = false)
-    val defaultGroup: Boolean = false,
 ) {
     @OneToMany(mappedBy = "linkGroup")
     var users: MutableSet<UserEntity> = mutableSetOf()

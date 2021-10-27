@@ -18,10 +18,13 @@ class UserSessionServiceImpl(
 
     override fun createSessionByUserId(id: Long): String {
         val sessionId = AtomicReference("")
-        lightDB.createMap {
+        val dbMap = lightDB.createMap {
             val token = TokenUtils.randomToken("user")
             sessionId.set(token)
             "session:user:$token"
+        }
+        UserSession(dbMap).apply {
+            userId = id
         }
         return sessionId.get()
     }

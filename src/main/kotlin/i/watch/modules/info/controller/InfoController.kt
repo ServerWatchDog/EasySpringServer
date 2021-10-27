@@ -9,6 +9,6 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("\${global.server.api}/info")
 class InfoController(private val softInfoService: IInfoService) {
 
-    @GetMapping("/encrypt")
-    fun publicKey() = softInfoService.encryptInfo()
+    @GetMapping("")
+    fun getInfo() = softInfoService.getInfo()
 }
