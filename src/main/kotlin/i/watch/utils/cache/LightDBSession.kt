@@ -1,6 +1,6 @@
 package i.watch.utils.cache
 
-import i.watch.handler.security.session.ISession
+import i.watch.handler.inject.session.ISession
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.concurrent.TimeUnit

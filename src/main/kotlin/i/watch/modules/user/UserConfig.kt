@@ -1,4 +1,4 @@
-package i.watch.modules.user.config
+package i.watch.modules.user
 
 import i.watch.handler.inject.config.ISoftConfig
 import i.watch.handler.inject.config.SoftConfig

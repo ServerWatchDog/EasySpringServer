@@ -1,7 +1,7 @@
 package i.watch.modules.install.service.impl
 
-import i.watch.handler.security.session.ISessionService.GenericISessionService
-import i.watch.modules.config.config.GlobalConfig
+import i.watch.handler.inject.session.ISessionService.GenericISessionService
+import i.watch.modules.config.GlobalConfig
 import i.watch.modules.config.service.IConfigService
 import i.watch.modules.install.model.view.InstallInitResultView
 import i.watch.modules.install.model.view.InstallInitView

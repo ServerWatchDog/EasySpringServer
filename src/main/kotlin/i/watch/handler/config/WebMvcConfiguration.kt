@@ -2,10 +2,10 @@ package i.watch.handler.config
 
 import i.watch.handler.config.properties.SoftConfigProperties
 import i.watch.handler.filter.RequestJsonFilter
+import i.watch.handler.inject.encrypt.EncryptResolver
 import i.watch.handler.inject.page.RestPageResolver
-import i.watch.handler.security.encrypt.EncryptResolver
-import i.watch.handler.security.session.AuthorityInterceptor
-import i.watch.handler.security.session.SessionResolver
+import i.watch.handler.inject.session.AuthorityInterceptor
+import i.watch.handler.inject.session.SessionResolver
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.web.servlet.FilterRegistrationBean
 import org.springframework.context.annotation.Bean

@@ -1,9 +1,10 @@
-package i.watch.handler.security.session
+package i.watch.handler.inject.session
 
 import i.watch.handler.advice.ForbiddenException
 import i.watch.utils.TokenUtils
 import i.watch.utils.getLogger
 import org.springframework.context.annotation.Configuration
+import org.springframework.core.annotation.AnnotationUtils
 import org.springframework.web.method.HandlerMethod
 import org.springframework.web.servlet.HandlerInterceptor
 import javax.servlet.http.HttpServletRequest
@@ -20,7 +21,13 @@ class AuthorityInterceptor(private val cachedContext: CachedBeanLoader) : Handle
         if (handler !is HandlerMethod) {
             return true
         }
-        val permission = handler.getMethodAnnotation(Permission::class.java) ?: return true
+        // 通过查询注解来获取权限
+        val permission = handler.getMethodAnnotation(Permission::class.java)
+            ?: AnnotationUtils.findAnnotation(handler.bean.javaClass, Permission::class.java) ?: return kotlin.run {
+            logger.debug("放行路径 {}.", request.pathInfo)
+            true
+        }
+
         val token = TokenUtils.decodeToken { header ->
             request.getHeader(header) ?: throw ForbiddenException("需要 Token.")
         }

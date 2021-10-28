@@ -16,7 +16,7 @@ class GroupEntity(
     @Column(name = "t_id", nullable = false)
     val id: Long = 0,
     @Column(name = "name", length = 128, nullable = false)
-    val name: String,
+    var name: String,
 ) {
     @OneToMany(mappedBy = "linkGroup")
     var users: MutableSet<UserEntity> = mutableSetOf()

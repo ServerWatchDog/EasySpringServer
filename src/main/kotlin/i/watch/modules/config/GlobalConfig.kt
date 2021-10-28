@@ -1,9 +1,9 @@
-package i.watch.modules.config.config
+package i.watch.modules.config
 
 import i.watch.handler.inject.config.ISoftConfig
 import i.watch.handler.inject.config.SoftConfig
 import i.watch.handler.inject.config.SoftConfigColumn
-import i.watch.handler.security.encrypt.EncryptView
+import i.watch.handler.inject.encrypt.EncryptView
 
 @SoftConfig("global.config")
 interface GlobalConfig : ISoftConfig {

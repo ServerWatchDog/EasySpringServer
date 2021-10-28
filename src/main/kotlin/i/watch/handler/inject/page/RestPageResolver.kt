@@ -25,7 +25,7 @@ class RestPageResolver : HandlerMethodArgumentResolver {
         webRequest: NativeWebRequest,
         binderFactory: WebDataBinderFactory?
     ): Any {
-        val restPage = parameter.getMethodAnnotation(RestPage::class.java)!!
+        val restPage = parameter.getParameterAnnotation(RestPage::class.java)!!
         val index = webRequest.getParameter("index")?.toInt() ?: 0
         val size = webRequest.getParameter("size")?.toInt() ?: restPage.size
         return PageRequest.of(index, size)

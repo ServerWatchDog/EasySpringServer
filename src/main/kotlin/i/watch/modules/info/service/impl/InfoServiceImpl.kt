@@ -4,8 +4,8 @@ import com.github.open_edgn.security4k.asymmetric.rsa.RsaPrivate
 import com.github.open_edgn.security4k.asymmetric.rsa.RsaPublic
 import com.github.open_edgn.security4k.asymmetric.universal.IPrivateKey
 import com.github.open_edgn.security4k.asymmetric.universal.IPublicKey
-import i.watch.handler.security.encrypt.EncryptView
-import i.watch.modules.config.config.GlobalConfig
+import i.watch.handler.inject.encrypt.EncryptView
+import i.watch.modules.config.GlobalConfig
 import i.watch.modules.info.model.view.EncryptResultView
 import i.watch.modules.info.model.view.SoftwareInfoResultView
 import i.watch.modules.info.service.IInfoService

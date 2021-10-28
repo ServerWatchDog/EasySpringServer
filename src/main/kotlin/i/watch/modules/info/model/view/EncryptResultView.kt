@@ -1,6 +1,6 @@
 package i.watch.modules.info.model.view
 
-import i.watch.handler.security.encrypt.EncryptView
+import i.watch.handler.inject.encrypt.EncryptView
 
 data class EncryptResultView(
     val type: EncryptView.EncryptType,

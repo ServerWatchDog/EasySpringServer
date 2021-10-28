@@ -1,4 +1,4 @@
-package i.watch.handler.security.encrypt
+package i.watch.handler.inject.encrypt
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import i.watch.handler.advice.BadRequestException

@@ -1,4 +1,4 @@
-package i.watch.handler.security.encrypt
+package i.watch.handler.inject.encrypt
 
 import io.swagger.v3.oas.annotations.Parameter
 

@@ -1,4 +1,4 @@
-package i.watch.handler.security.session
+package i.watch.handler.inject.session
 
 import org.springframework.context.ApplicationContext
 import org.springframework.stereotype.Component

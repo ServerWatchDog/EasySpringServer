@@ -1,8 +1,8 @@
 package i.watch.modules.user.controller
 
+import i.watch.handler.inject.encrypt.CryptRequestBody
 import i.watch.handler.inject.page.RestPage
-import i.watch.handler.security.encrypt.CryptRequestBody
-import i.watch.handler.security.session.Permission
+import i.watch.handler.inject.session.Permission
 import i.watch.modules.user.UserAuthority
 import i.watch.modules.user.model.view.user.UserInsertView
 import i.watch.modules.user.service.IUserService

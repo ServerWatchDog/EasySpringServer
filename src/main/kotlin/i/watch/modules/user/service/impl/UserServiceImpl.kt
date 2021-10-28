@@ -4,7 +4,7 @@ import com.j256.twofactorauth.TimeBasedOneTimePasswordUtil
 import com.querydsl.jpa.impl.JPAQueryFactory
 import i.watch.handler.advice.BadRequestException
 import i.watch.handler.advice.ForbiddenException
-import i.watch.modules.user.config.UserConfig
+import i.watch.modules.user.UserConfig
 import i.watch.modules.user.model.db.QAuthorityEntity
 import i.watch.modules.user.model.db.QGroupEntity
 import i.watch.modules.user.model.db.QUserEntity
@@ -15,17 +15,16 @@ import i.watch.modules.user.model.view.register.RegisterResultView
 import i.watch.modules.user.model.view.register.RegisterView
 import i.watch.modules.user.model.view.user.UserInsertView
 import i.watch.modules.user.model.view.user.UserResultView
-import i.watch.modules.user.model.view.user.UsersResultView
 import i.watch.modules.user.repository.UserRepository
 import i.watch.modules.user.service.IUserService
 import i.watch.modules.user.service.IUserSessionService
+import i.watch.utils.DateTimeUtils
 import i.watch.utils.HashUtils
-import i.watch.utils.SimpleResultView
 import i.watch.utils.SnowFlakeUtils
 import i.watch.utils.cache.cache.IDataCacheManager
 import i.watch.utils.cache.cache.cache
 import i.watch.utils.getLogger
-import org.springframework.data.domain.Pageable
+import i.watch.utils.template.crud.CRUDServiceImpl
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
 import java.util.Optional
@@ -34,12 +33,12 @@ import javax.annotation.Resource
 @Service
 class UserServiceImpl(
     private val jpaQuery: JPAQueryFactory,
-    private val userRepository: UserRepository,
+    override val repository: UserRepository,
     private val hashUtils: HashUtils,
     private val userConfig: UserConfig,
     private val idGenerator: SnowFlakeUtils,
-    private val dataCacheManager: IDataCacheManager
-) : IUserService {
+    dataCacheManager: IDataCacheManager
+) : IUserService, CRUDServiceImpl<UserInsertView, UserResultView, Long, UserEntity>() {
 
     private val authorityCache = dataCacheManager.newCache("authority")
 
@@ -83,31 +82,21 @@ class UserServiceImpl(
         }
     }
 
-    override fun tryRegister(registerView: RegisterView): RegisterResultView {
+    override fun tryRegister(user: RegisterView): RegisterResultView {
         if (!userConfig.allowRegister) {
             throw BadRequestException("管理员配置不允许注册.")
         }
-        val exists = QUserEntity.userEntity.let {
-            jpaQuery.selectFrom(it)
-                .where(it.email.eq(registerView.email.lowercase())).fetchCount() != 0L
-        }
-        if (exists) {
-            throw ForbiddenException("此用户已被注册.")
-        }
-        val nextUuid = idGenerator.nextId()
         val group = jpaQuery
-            .selectFrom(QGroupEntity.groupEntity)
+            .select(QGroupEntity.groupEntity.name)
+            .from(QGroupEntity.groupEntity)
             .where(QGroupEntity.groupEntity.id.eq(userConfig.defaultGroupId))
             .fetchOne() ?: throw BadRequestException("管理员配置不允许注册.")
-        userRepository.saveAndFlush(
-            UserEntity(
-                id = nextUuid,
-                email = registerView.email,
-                name = registerView.name,
-                password = hashUtils.create(registerView.password),
-                twoFactor = "",
-                registerTime = LocalDateTime.now(),
-                linkGroup = group
+        insert(
+            input = UserInsertView(
+                name = user.name,
+                email = user.email,
+                password = user.password,
+                group = group
             )
         )
         return RegisterResultView(status = RegisterResultView.RegisterStatus.SUCCESS)
@@ -129,19 +118,48 @@ class UserServiceImpl(
         }
     }
 
-    override fun select(pageable: Pageable): UsersResultView {
-        TODO("Not yet implemented")
+    override fun tableToOutput(table: UserEntity): UserResultView {
+        return table.let {
+            UserResultView(
+                id = it.id.toString(),
+                name = it.name,
+                email = it.email,
+                password = "******",
+                registerDate = DateTimeUtils.formatDateTime(it.registerTime),
+                groupName = it.linkGroup.name
+            )
+        }
     }
 
-    override fun insert(user: UserInsertView): UserResultView {
-        TODO("Not yet implemented")
+    override fun inputToTable(table: Optional<UserEntity>, input: UserInsertView): UserEntity {
+        val defaultGroup = jpaQuery.selectFrom(QGroupEntity.groupEntity)
+            .where(QGroupEntity.groupEntity.name.eq(input.group)).fetchOne()
+            ?: throw BadRequestException("未找到名为 ${input.group} 的组.")
+        return if (table.isEmpty) {
+            if (repository.existsByEmail(input.email.lowercase()).not()) {
+                throw ForbiddenException("邮箱已被注册.")
+            }
+            UserEntity(
+                id = idGenerator.nextId(),
+                email = input.email.lowercase(),
+                name = input.name,
+                password = hashUtils.create(input.password),
+                twoFactor = "",
+                registerTime = LocalDateTime.now(),
+                linkGroup = defaultGroup
+            )
+        } else {
+            table.get().apply {
+                email = input.email.lowercase()
+                name = input.name
+                password = hashUtils.create(input.password)
+                twoFactor = ""
+                linkGroup = defaultGroup
+            }
+        }
     }
 
-    override fun update(userId: Long, user: UserInsertView): UserResultView {
-        TODO("Not yet implemented")
-    }
-
-    override fun delete(userId: Long): SimpleResultView<Boolean> {
-        TODO("Not yet implemented")
+    override fun afterWriteHook(table: UserEntity) {
+        authorityCache.clear(table.id.toString()) // 进行用户操作后清除作业缓存
     }
 }

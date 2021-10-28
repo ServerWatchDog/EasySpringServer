@@ -1,6 +1,6 @@
 package i.watch.modules.dev.controller
 
-import i.watch.handler.security.encrypt.EncryptView
+import i.watch.handler.inject.encrypt.EncryptView
 import i.watch.modules.info.service.IInfoService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content

@@ -1,4 +1,4 @@
-package i.watch.handler.security.session
+package i.watch.handler.inject.session
 
 import i.watch.handler.advice.ForbiddenException
 import i.watch.utils.TokenUtils

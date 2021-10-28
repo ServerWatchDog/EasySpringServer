@@ -1,6 +1,6 @@
 package i.watch.handler.config.properties
 
-import i.watch.handler.security.encrypt.EncryptView
+import i.watch.handler.inject.encrypt.EncryptView
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.ConstructorBinding
 

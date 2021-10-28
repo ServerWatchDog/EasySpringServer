@@ -1,6 +1,6 @@
 package i.watch.modules.user.controller
 
-import i.watch.handler.security.encrypt.CryptRequestBody
+import i.watch.handler.inject.encrypt.CryptRequestBody
 import i.watch.modules.user.model.view.login.LoginResultView
 import i.watch.modules.user.model.view.login.LoginView
 import i.watch.modules.user.model.view.register.RegisterResultView

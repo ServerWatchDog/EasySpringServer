@@ -1,6 +1,6 @@
 package i.watch.modules.install.controller
 
-import i.watch.handler.security.encrypt.CryptRequestBody
+import i.watch.handler.inject.encrypt.CryptRequestBody
 import i.watch.modules.install.model.tag.InstallPermission
 import i.watch.modules.install.model.view.InstallInitView
 import i.watch.modules.install.service.InstallService

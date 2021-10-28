@@ -35,5 +35,5 @@ class UserEntity(
     val registerTime: LocalDateTime = LocalDateTime.now(),
     @ManyToOne
     @JoinColumn(name = "groupId", nullable = false)
-    val linkGroup: GroupEntity
+    var linkGroup: GroupEntity
 )
