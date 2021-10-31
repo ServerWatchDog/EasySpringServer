@@ -13,12 +13,14 @@ import i.watch.modules.user.model.view.login.LoginResultView
 import i.watch.modules.user.model.view.login.LoginView
 import i.watch.modules.user.model.view.register.RegisterResultView
 import i.watch.modules.user.model.view.register.RegisterView
+import i.watch.modules.user.model.view.user.UserInfoResultView
 import i.watch.modules.user.model.view.user.UserInsertView
 import i.watch.modules.user.model.view.user.UserResultView
 import i.watch.modules.user.repository.UserRepository
 import i.watch.modules.user.service.IUserService
 import i.watch.modules.user.service.IUserSessionService
 import i.watch.utils.DateTimeUtils
+import i.watch.utils.EmailImageUtils
 import i.watch.utils.HashUtils
 import i.watch.utils.SnowFlakeUtils
 import i.watch.utils.cache.cache.IDataCacheManager
@@ -129,6 +131,18 @@ class UserServiceImpl(
                 groupName = it.linkGroup.name
             )
         }
+    }
+
+    override fun userInfo(userSession: UserSessionServiceImpl.UserSession): UserInfoResultView {
+        val qUser = QUserEntity.userEntity
+        val select = jpaQuery.select(qUser.name, qUser.email, qUser.linkGroup.name)
+            .from(qUser)
+            .where(qUser.id.eq(userSession.userId)).fetchOne() ?: throw RuntimeException("未知错误！")
+        return UserInfoResultView(
+            name = select.get(qUser.name)!!,
+            url = EmailImageUtils.getImageUrl(select.get(qUser.email)!!),
+            groupName = select.get(qUser.linkGroup.name)!!
+        )
     }
 
     override fun inputToTable(table: Optional<UserEntity>, input: UserInsertView): UserEntity {

@@ -19,7 +19,7 @@ interface LightDB {
     /**
      * 创建 MAP 实例，如果已存在则直接获取
      */
-    fun createOrGetMap(key: String): LightDBMap
+    fun getOrCreateMap(key: String, create: (LightDBMap) -> Unit = {}): LightDBMap
 
     /**
      *  删除MAP 实例

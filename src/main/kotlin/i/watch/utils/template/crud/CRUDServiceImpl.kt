@@ -24,10 +24,12 @@ abstract class CRUDServiceImpl<IN : Any, OUT : CRUDOutputView, ID : Any, TABLE :
         return repository.findAll(pageable)
             .map { tableToOutput(it) }
             .let {
+                val size = repository.count()
                 PageView(
                     it.toList(),
-                    pageable.pageNumber,
-                    repository.count() / pageable.pageSize
+                    pageIndex = pageable.pageNumber + 1,
+                    pageCount = (size / pageable.pageSize) + 1,
+                    size = size
                 )
             }
     }

@@ -3,6 +3,7 @@ package i.watch.modules.user.controller
 import i.watch.modules.user.model.view.login.LoginView
 import i.watch.modules.user.model.view.register.RegisterView
 import i.watch.modules.user.service.IUserService
+import i.watch.modules.user.service.impl.UserSessionServiceImpl.UserSession
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
@@ -16,4 +17,7 @@ class LoginController(
     override fun register(
         registerView: RegisterView
     ) = userService.tryRegister(registerView)
+
+    override fun userInfo(userSession: UserSession) =
+        userService.userInfo(userSession)
 }

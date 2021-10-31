@@ -9,10 +9,16 @@ data class PageView<T : Any>(
     /**
      * 当前页码
      */
-    val index: Int,
+    val pageIndex: Int,
 
     /**
      * 页码总量
      */
-    val pages: Long,
+    val pageCount: Long,
+
+    /**
+     * 数据总数量
+     */
+    val size: Long
+
 )

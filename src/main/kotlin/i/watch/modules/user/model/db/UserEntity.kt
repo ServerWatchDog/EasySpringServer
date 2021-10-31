@@ -1,5 +1,7 @@
 package i.watch.modules.user.model.db
 
+import i.watch.modules.client.model.db.ClientEntity
+import i.watch.modules.client.model.db.ClientGroupEntity
 import java.time.LocalDateTime
 import javax.persistence.Column
 import javax.persistence.Entity
@@ -7,6 +9,7 @@ import javax.persistence.Id
 import javax.persistence.Index
 import javax.persistence.JoinColumn
 import javax.persistence.ManyToOne
+import javax.persistence.OneToMany
 import javax.persistence.Table
 import javax.validation.constraints.Email
 
@@ -36,4 +39,10 @@ class UserEntity(
     @ManyToOne
     @JoinColumn(name = "groupId", nullable = false)
     var linkGroup: GroupEntity
-)
+) {
+    @OneToMany(mappedBy = "linkedUser")
+    val clients: MutableSet<ClientEntity> = mutableSetOf()
+
+    @OneToMany(mappedBy = "linkedUser")
+    val clientGroups: MutableSet<ClientGroupEntity> = mutableSetOf()
+}

@@ -1,13 +1,19 @@
 package i.watch.modules.user.controller
 
 import i.watch.handler.inject.encrypt.CryptRequestBody
+import i.watch.handler.inject.session.Permission
+import i.watch.handler.inject.session.Session
+import i.watch.modules.user.UserAuthority
 import i.watch.modules.user.model.view.login.LoginResultView
 import i.watch.modules.user.model.view.login.LoginView
 import i.watch.modules.user.model.view.register.RegisterResultView
 import i.watch.modules.user.model.view.register.RegisterView
+import i.watch.modules.user.model.view.user.UserInfoResultView
+import i.watch.modules.user.service.impl.UserSessionServiceImpl
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.http.MediaType
+import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
@@ -38,4 +44,8 @@ interface LoginApi {
     fun register(
         @Valid @CryptRequestBody registerView: RegisterView
     ): RegisterResultView
+
+    @Permission("user", [UserAuthority.CONSOLE_LOGIN])
+    @GetMapping("/info")
+    fun userInfo(@Session userSession: UserSessionServiceImpl.UserSession): UserInfoResultView
 }

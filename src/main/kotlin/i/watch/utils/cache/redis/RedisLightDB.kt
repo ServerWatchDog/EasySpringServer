@@ -33,12 +33,16 @@ class RedisLightDB(
         return getMap(key).get()
     }
 
-    override fun createOrGetMap(key: String): LightDBMap {
-        redisTemplate.opsForHash<String, String>().putIfAbsent(
-            wrapKey(key), "_init",
-            LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
-        )
-        return getMap(key).get()
+    override fun getOrCreateMap(key: String, create: (LightDBMap) -> Unit): LightDBMap {
+        val result by lazy { getMap(key).get() }
+        if (redisTemplate.opsForHash<String, String>().putIfAbsent(
+                wrapKey(key), "_init",
+                LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
+            )
+        ) {
+            create(result)
+        }
+        return result
     }
 
     override fun drop(key: String): Boolean {
