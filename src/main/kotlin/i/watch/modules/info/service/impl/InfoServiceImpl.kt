@@ -9,11 +9,13 @@ import i.watch.modules.config.GlobalConfig
 import i.watch.modules.info.model.view.EncryptResultView
 import i.watch.modules.info.model.view.SoftwareInfoResultView
 import i.watch.modules.info.service.IInfoService
+import i.watch.modules.user.repository.AuthorityRepository
 import org.springframework.stereotype.Service
 
 @Service
 class InfoServiceImpl(
-    private val globalConfig: GlobalConfig
+    private val globalConfig: GlobalConfig,
+    private val authorityRepository: AuthorityRepository
 ) : IInfoService {
     override fun encryptInfo(): EncryptResultView {
         return EncryptResultView(globalConfig.type, globalConfig.publicKey)
@@ -37,5 +39,9 @@ class InfoServiceImpl(
 
     override fun getInfo(): SoftwareInfoResultView {
         return SoftwareInfoResultView(installed = globalConfig.installed, encrypt = encryptInfo())
+    }
+
+    override fun authority(): List<String> {
+        return authorityRepository.findAll().map { it.id }
     }
 }

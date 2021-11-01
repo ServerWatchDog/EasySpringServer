@@ -16,7 +16,7 @@ class ClientSessionServiceImpl(
     ISessionService.GenericISessionService<ClientSession> {
     override fun getSession(token: String): Optional<ClientSession> {
         return clientRepository.findByToken(token).map {
-            ClientSession(it.enable)
+            ClientSession(it.enable, it.id)
         }
     }
 

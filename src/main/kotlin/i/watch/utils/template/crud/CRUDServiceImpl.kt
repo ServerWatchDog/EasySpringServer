@@ -2,6 +2,7 @@ package i.watch.utils.template.crud
 
 import i.watch.handler.advice.BadRequestException
 import i.watch.handler.advice.NotFoundException
+import i.watch.utils.getLogger
 import i.watch.utils.template.PageView
 import i.watch.utils.template.SimpleView
 import org.springframework.data.domain.Pageable
@@ -18,6 +19,8 @@ abstract class CRUDServiceImpl<IN : Any, OUT : CRUDOutputView, ID : Any, TABLE :
     abstract fun inputToTable(table: Optional<TABLE>, input: IN): TABLE
 
     open fun afterWriteHook(table: TABLE) {}
+
+    private val logger = getLogger()
 
     @Transactional
     override fun select(pageable: Pageable): PageView<OUT> {
@@ -39,6 +42,7 @@ abstract class CRUDServiceImpl<IN : Any, OUT : CRUDOutputView, ID : Any, TABLE :
         val insertTable = try {
             inputToTable(Optional.empty(), input)
         } catch (e: Exception) {
+            logger.debug("CRUD 转换错误", e)
             throw BadRequestException("添加错误！${e.message ?: ""}")
         }
         val saved = repository.save(insertTable)

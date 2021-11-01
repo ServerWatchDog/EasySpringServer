@@ -4,6 +4,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory
 import i.watch.handler.advice.BadRequestException
 import i.watch.modules.user.model.db.GroupEntity
 import i.watch.modules.user.model.db.QAuthorityEntity
+import i.watch.modules.user.model.db.QGroupEntity
 import i.watch.modules.user.model.db.QUserEntity
 import i.watch.modules.user.model.view.group.GroupInsertView
 import i.watch.modules.user.model.view.group.GroupResultView
@@ -71,5 +72,9 @@ class GroupServiceImpl(
 
     override fun afterWriteHook(table: GroupEntity) {
         table.users.forEach { authorityCache.clear(it.id.toString()) }
+    }
+
+    override fun getPlain(): List<String> {
+        return jpaQuery.select(QGroupEntity.groupEntity.name).from(QGroupEntity.groupEntity).fetch()
     }
 }

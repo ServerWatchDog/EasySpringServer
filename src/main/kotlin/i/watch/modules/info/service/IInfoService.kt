@@ -11,4 +11,5 @@ interface IInfoService {
     fun getPrivateKey(type: EncryptType): IPrivateKey
     fun getPublicKey(type: EncryptType): IPublicKey
     fun getInfo(): SoftwareInfoResultView
+    fun authority(): List<String>
 }

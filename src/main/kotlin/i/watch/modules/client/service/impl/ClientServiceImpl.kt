@@ -2,12 +2,15 @@ package i.watch.modules.client.service.impl
 
 import i.watch.handler.advice.BadRequestException
 import i.watch.modules.client.model.db.ClientEntity
+import i.watch.modules.client.model.view.client.ClientInfoView
 import i.watch.modules.client.model.view.client.ClientInsertView
+import i.watch.modules.client.model.view.client.ClientLoginResultView
 import i.watch.modules.client.model.view.client.ClientResultView
 import i.watch.modules.client.repository.ClientGroupRepository
 import i.watch.modules.client.repository.ClientRepository
 import i.watch.modules.client.service.IClientService
 import i.watch.modules.client.service.IClientSessionService
+import i.watch.modules.push.service.IPushService
 import i.watch.modules.user.repository.UserRepository
 import i.watch.utils.SnowFlakeUtils
 import i.watch.utils.template.crud.CRUDServiceImpl
@@ -20,9 +23,15 @@ class ClientServiceImpl(
     private val idGenerator: SnowFlakeUtils,
     private val clientSessionService: IClientSessionService,
     private val userRepository: UserRepository,
-    private val groupRepository: ClientGroupRepository
+    private val groupRepository: ClientGroupRepository,
+    private val pushService: IPushService,
 ) : IClientService,
     CRUDServiceImpl<ClientInsertView, ClientResultView, Long, ClientEntity>() {
+
+    override fun clientLogin(clientSession: ClientSession, clientInfo: ClientInfoView): ClientLoginResultView {
+        return ClientLoginResultView(pushService.newSession(clientSession.clientId, clientInfo))
+    }
+
     override fun tableToOutput(table: ClientEntity): ClientResultView {
         val user = table.linkedUser
         return ClientResultView(
@@ -35,7 +44,8 @@ class ClientServiceImpl(
             groups = table.groups
                 .map { ClientResultView.SimpleClientGroupResultView(it.id, it.name) },
             token = table.token,
-            enabled = table.enable
+            enabled = table.enable,
+            name = table.name
         )
     }
 
@@ -55,6 +65,7 @@ class ClientServiceImpl(
             it.groups.addAll(newGroups)
             it.enable = input.enabled
             it.linkedUser = newUser
+            it.name = input.name
             it
         }.orElseGet {
             ClientEntity(

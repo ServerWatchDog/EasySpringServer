@@ -12,7 +12,7 @@ import org.springframework.data.domain.Pageable
  * @constructor
  */
 abstract class CRUDController<IN : Any, OUT : CRUDOutputView, ID : Any>(
-    private val service: CRUDService<IN, OUT, ID>
+    protected val service: CRUDService<IN, OUT, ID>
 ) {
     open fun getAll(pageable: Pageable) = service.select(pageable)
 

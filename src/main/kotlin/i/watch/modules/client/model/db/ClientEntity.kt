@@ -1,5 +1,6 @@
 package i.watch.modules.client.model.db
 
+import i.watch.modules.log.model.db.ClientOnlineEntity
 import i.watch.modules.user.model.db.UserEntity
 import javax.persistence.Column
 import javax.persistence.Entity
@@ -8,6 +9,7 @@ import javax.persistence.Index
 import javax.persistence.JoinColumn
 import javax.persistence.ManyToMany
 import javax.persistence.ManyToOne
+import javax.persistence.OneToMany
 import javax.persistence.Table
 
 @Entity
@@ -31,6 +33,9 @@ class ClientEntity(
     @JoinColumn(name = "userId", nullable = false)
     var linkedUser: UserEntity,
 ) {
+    @OneToMany(mappedBy = "linkedClient")
+    val online: MutableSet<ClientOnlineEntity> = mutableSetOf()
+
     @ManyToMany(mappedBy = "linkedClients")
     val groups: MutableSet<ClientGroupEntity> = mutableSetOf()
 }

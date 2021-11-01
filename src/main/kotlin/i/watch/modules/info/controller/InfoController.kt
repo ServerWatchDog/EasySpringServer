@@ -11,4 +11,7 @@ class InfoController(private val softInfoService: IInfoService) {
 
     @GetMapping("")
     fun getInfo() = softInfoService.getInfo()
+
+    @GetMapping("authority")
+    fun getUserAuthority() = softInfoService.authority()
 }

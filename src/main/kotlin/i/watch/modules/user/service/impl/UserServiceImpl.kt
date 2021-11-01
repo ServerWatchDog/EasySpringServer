@@ -150,7 +150,7 @@ class UserServiceImpl(
             .where(QGroupEntity.groupEntity.name.eq(input.group)).fetchOne()
             ?: throw BadRequestException("未找到名为 ${input.group} 的组.")
         return if (table.isEmpty) {
-            if (repository.existsByEmail(input.email.lowercase()).not()) {
+            if (repository.existsByEmail(input.email.lowercase())) {
                 throw ForbiddenException("邮箱已被注册.")
             }
             UserEntity(

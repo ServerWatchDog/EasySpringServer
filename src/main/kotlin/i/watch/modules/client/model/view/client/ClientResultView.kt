@@ -4,6 +4,7 @@ import i.watch.utils.template.crud.CRUDOutputView
 
 data class ClientResultView(
     override val id: String,
+    val name: String,
     val user: SimpleUserResultView,
     val groups: List<SimpleClientGroupResultView>,
     val enabled: Boolean,
