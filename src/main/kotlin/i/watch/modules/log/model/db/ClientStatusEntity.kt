@@ -18,7 +18,7 @@ class ClientStatusEntity(
     @OneToOne
     val onlineEntity: ClientOnlineEntity,
     val cpuStage: Long,
-    val usedMenory: Long,
+    val usedMemory: Long,
     val usedDisk: Long,
     val usedNetwork: Long,
     @ManyToOne

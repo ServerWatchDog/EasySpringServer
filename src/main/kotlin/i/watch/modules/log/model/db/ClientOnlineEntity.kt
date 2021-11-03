@@ -7,7 +7,6 @@ import javax.persistence.Entity
 import javax.persistence.Id
 import javax.persistence.JoinColumn
 import javax.persistence.ManyToOne
-import javax.persistence.OneToOne
 import javax.persistence.Table
 
 @Entity
@@ -22,6 +21,4 @@ class ClientOnlineEntity(
     val linkedClient: ClientEntity,
     @Column(name = "push_date", nullable = false)
     val date: LocalDateTime,
-    @OneToOne
-    val status: ClientStatusEntity
 )
