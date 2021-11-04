@@ -13,6 +13,7 @@ import i.watch.modules.log.model.db.QClientStatusEntity
 import i.watch.modules.log.repository.ClientInfoRepository
 import i.watch.modules.log.repository.ClientOnlineRepository
 import i.watch.modules.log.repository.ClientStatusRepository
+import i.watch.modules.log.service.ILogPushService
 import i.watch.modules.log.service.ILogService
 import i.watch.modules.push.model.view.push.ClientLoginView
 import i.watch.modules.push.model.view.push.ClientPushView
@@ -31,12 +32,14 @@ class LogServiceImpl(
     private val clientOnlineRepository: ClientOnlineRepository,
     private val clientStatusRepository: ClientStatusRepository,
     private val jpaQuery: JPAQueryFactory,
+    private val log: ILogPushService,
     private val idGenerate: SnowFlakeUtils
 ) : ILogService {
     override fun putClientInfo(clientId: Long, clientInfo: ClientLoginView): Long {
         val qCI = QClientInfoEntity.clientInfoEntity
         val client = jpaQuery.selectFrom(QClientEntity.clientEntity)
             .where(QClientEntity.clientEntity.id.eq(clientId)).fetchFirst() ?: throw NotFoundException("无此客户端")
+        log.pushClientLog(client, "设备上线！", "设备连接")
         val infoEntity = jpaQuery.select(qCI).from(qCI).where(qCI.client.eq(client))
             .orderBy(qCI.createDate.desc()).fetchFirst()
             .let { Optional.ofNullable(it) }
@@ -120,10 +123,10 @@ class LogServiceImpl(
 
     private val logger = getLogger()
 
-    @Scheduled(fixedRate = 60_000)
+    @Scheduled(fixedRate = 10_000)
     fun destroyLogout() {
         logger.debug("销毁过时会话.")
-        val before = LocalDateTime.now().minusMinutes(5)
+        val before = LocalDateTime.now().minusMinutes(1)
         val clients = jpaQuery.select(QClientEntity.clientEntity.id).from(QClientEntity.clientEntity)
             .where(QClientEntity.clientEntity.enable.eq(true))
             .fetch()
@@ -137,6 +140,6 @@ class LogServiceImpl(
     }
 
     override fun putLogoutMessage(clientId: Long, clientOnlineId: Long) {
-
+        log.pushClientLog(clientId, "设备下线！", "设备连接")
     }
 }

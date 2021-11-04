@@ -9,7 +9,7 @@ function rand(){
 
 BASE_URL=http://127.0.0.1:8080/api
 #read -p '请输入登录密钥：' LOGIN_SESSION
-LOGIN_SESSION=d9d6d39a9a-7dae8045-a952-4c43-b319-613c6752d08d
+LOGIN_SESSION=$1
 
 export LOGIN=$(
 curl -X 'POST' \

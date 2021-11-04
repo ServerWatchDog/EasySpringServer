@@ -14,17 +14,20 @@ import i.watch.utils.template.SimpleView
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
 import java.util.Optional
+import javax.annotation.Resource
 
 @Service("AUTH:push")
 class PushServiceImpl(
     private val lightDB: LightDB,
-    private val clientService: IClientService,
-    private val logService: ILogService,
+    private val clientService: IClientService
 ) : IPushService, ISessionService.GenericISessionService<PushSession> {
+
+    @Resource
+    lateinit var logService: ILogService
     override fun connect(clientLogin: ClientLoginView, clientSession: ClientSession): SimpleView<String> {
         val lastKey = "session:push:${clientSession.currentPushToken}"
         lightDB.getMap(lastKey).ifPresent {
-            lightDB.drop(lastKey)
+            disConnect(PushSession(it))
             // 断开旧的会话
         }
         val newToken = TokenUtils.randomToken("push")
@@ -67,14 +70,13 @@ class PushServiceImpl(
     override fun disConnect(pushSession: PushSession): SimpleView<Boolean> {
         val lastKey = "session:push:${pushSession.token}"
         lightDB.getMap(lastKey).ifPresent {
-            lightDB.drop(lastKey)
             clientService.getSessionByClientId(pushSession.clientId).ifPresent {
                 it.currentPushToken = ""
             }
+            logService.putLogoutMessage(pushSession.clientId, pushSession.clientOnlineId)
+            lightDB.drop(lastKey)
             // 断开会话
-            logService.putLogoutMessage(pushSession.clientId,pushSession.clientOnlineId)
         }
         return SimpleView(true)
     }
-
 }

@@ -1,6 +1,8 @@
 package i.watch.utils
 
+import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 
 object DateTimeUtils {
@@ -20,6 +22,6 @@ object DateTimeUtils {
     }
 
     fun parseDate(date: String): LocalDateTime {
-        return LocalDateTime.parse(date, dateFormat)
+        return LocalDateTime.of(LocalDate.parse(date, dateFormat), LocalTime.MIN)
     }
 }

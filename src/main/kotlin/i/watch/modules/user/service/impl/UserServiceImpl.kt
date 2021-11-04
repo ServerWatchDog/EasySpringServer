@@ -3,6 +3,7 @@ package i.watch.modules.user.service.impl
 import com.querydsl.jpa.impl.JPAQueryFactory
 import i.watch.handler.advice.BadRequestException
 import i.watch.handler.advice.ForbiddenException
+import i.watch.modules.log.service.ILogPushService
 import i.watch.modules.user.UserConfig
 import i.watch.modules.user.model.db.QAuthorityEntity
 import i.watch.modules.user.model.db.QGroupEntity
@@ -39,7 +40,8 @@ class UserServiceImpl(
     private val hashUtils: HashUtils,
     private val userConfig: UserConfig,
     private val idGenerator: SnowFlakeUtils,
-    dataCacheManager: IDataCacheManager
+    dataCacheManager: IDataCacheManager,
+    private val log: ILogPushService
 ) : IUserService, CRUDServiceImpl<UserInsertView, UserResultView, Long, UserEntity>() {
 
     private val authorityCache = dataCacheManager.newCache("authority")
@@ -63,6 +65,7 @@ class UserServiceImpl(
                 it.twoFactor.isEmpty() ||
                     twoFactoryGem(it.twoFactor) == loginView.code
             }.map {
+                log.pushUserLog(it, "用户已登录", "用户")
                 LoginResultView(
                     // 登录成功
                     LoginResultView.LoginResultType.SUCCESS,
