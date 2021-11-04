@@ -1,36 +1,31 @@
 package i.watch.modules.client.service.impl
 
 import i.watch.handler.advice.BadRequestException
+import i.watch.modules.client.ClientAuthority
 import i.watch.modules.client.model.db.ClientEntity
-import i.watch.modules.client.model.view.client.ClientInfoView
+import i.watch.modules.client.model.session.ClientSession
 import i.watch.modules.client.model.view.client.ClientInsertView
-import i.watch.modules.client.model.view.client.ClientLoginResultView
 import i.watch.modules.client.model.view.client.ClientResultView
 import i.watch.modules.client.repository.ClientGroupRepository
 import i.watch.modules.client.repository.ClientRepository
 import i.watch.modules.client.service.IClientService
-import i.watch.modules.client.service.IClientSessionService
-import i.watch.modules.push.service.IPushService
 import i.watch.modules.user.repository.UserRepository
 import i.watch.utils.SnowFlakeUtils
+import i.watch.utils.TokenUtils
+import i.watch.utils.cache.LightDB
 import i.watch.utils.template.crud.CRUDServiceImpl
 import org.springframework.stereotype.Service
 import java.util.Optional
 
-@Service
+@Service("AUTH:cli")
 class ClientServiceImpl(
     override val repository: ClientRepository,
     private val idGenerator: SnowFlakeUtils,
-    private val clientSessionService: IClientSessionService,
     private val userRepository: UserRepository,
     private val groupRepository: ClientGroupRepository,
-    private val pushService: IPushService,
+    private val lightDB: LightDB
 ) : IClientService,
     CRUDServiceImpl<ClientInsertView, ClientResultView, Long, ClientEntity>() {
-
-    override fun clientLogin(clientSession: ClientSession, clientInfo: ClientInfoView): ClientLoginResultView {
-        return ClientLoginResultView(pushService.newSession(clientSession.clientId, clientInfo))
-    }
 
     override fun tableToOutput(table: ClientEntity): ClientResultView {
         val user = table.linkedUser
@@ -59,7 +54,7 @@ class ClientServiceImpl(
         }
         return table.map {
             if (input.refreshToken) {
-                it.token = clientSessionService.newToken()
+                it.token = newToken()
             }
             it.groups.clear()
             it.groups.addAll(newGroups)
@@ -71,12 +66,39 @@ class ClientServiceImpl(
             ClientEntity(
                 id = idGenerator.nextId(),
                 name = input.name,
-                token = clientSessionService.newToken(),
+                token = newToken(),
                 linkedUser = newUser,
                 enable = input.enabled
             ).apply {
                 groups.addAll(newGroups)
             }
+        }
+    }
+
+    private fun newToken(): String {
+        return TokenUtils.randomToken("cli")
+    }
+
+    override fun getSession(token: String): Optional<ClientSession> {
+        return repository.findByToken(token).map { getSessionByClientId(it.id).get() }
+    }
+
+    override fun getSessionByClientId(clientId: Long): Optional<ClientSession> {
+        return repository.findById(clientId).map { entity ->
+            lightDB.getOrCreateMap("session:client:$clientId") {
+                ClientSession(it).apply {
+                    enable = entity.enable
+                    this.clientId = entity.id
+                }
+            }
+        }.map { ClientSession(it) }
+    }
+
+    override fun verifySession(session: ClientSession, permissions: Array<String>): Boolean {
+        return if (permissions.contains(ClientAuthority.ENABLED)) {
+            session.enable
+        } else {
+            true
         }
     }
 }

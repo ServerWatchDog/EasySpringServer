@@ -1,10 +1,9 @@
 package i.watch.modules.log.model.db
 
+import java.time.LocalDateTime
 import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.Id
-import javax.persistence.JoinColumn
-import javax.persistence.ManyToOne
 import javax.persistence.OneToOne
 import javax.persistence.Table
 
@@ -21,7 +20,5 @@ class ClientStatusEntity(
     val usedMemory: Long,
     val usedDisk: Long,
     val usedNetwork: Long,
-    @ManyToOne
-    @JoinColumn(name = "info_id", nullable = false)
-    val linkedInfo: ClientInfoEntity
+    val putDate: LocalDateTime
 )

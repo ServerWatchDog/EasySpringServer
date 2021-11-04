@@ -21,4 +21,7 @@ class ClientOnlineEntity(
     val linkedClient: ClientEntity,
     @Column(name = "push_date", nullable = false)
     val date: LocalDateTime,
+    @ManyToOne
+    @JoinColumn(name = "info_id", nullable = false)
+    val linkedInfo: ClientInfoEntity
 )

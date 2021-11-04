@@ -1,8 +1,11 @@
 package i.watch.modules.push.model.view.push
 
-data class ServerStatusView(
+import java.time.LocalDateTime
+
+data class ClientPushView(
     val cpuStage: Long,
     val usedMemory: Long,
     val usedDisk: Long,
-    val usedNetwork: Long
+    val usedNetwork: Long,
+    val putDate: LocalDateTime
 )

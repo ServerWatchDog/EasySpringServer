@@ -1,14 +1,24 @@
 package i.watch.modules.push.service
 
-import i.watch.modules.client.model.view.client.ClientInfoView
-import i.watch.modules.push.model.view.online.OnlineResultView
-import i.watch.modules.push.model.view.push.ServerStatusResultView
-import i.watch.modules.push.model.view.push.ServerStatusView
-import i.watch.modules.push.service.impl.PushSessionServiceImpl
-import i.watch.modules.user.service.impl.UserSessionServiceImpl
+import i.watch.modules.client.model.session.ClientSession
+import i.watch.modules.push.model.session.PushSession
+import i.watch.modules.push.model.view.push.ClientLoginView
+import i.watch.modules.push.model.view.push.ClientPushView
+import i.watch.utils.template.SimpleView
 
 interface IPushService {
-    fun newSession(clientId: Long, clientInfo: ClientInfoView): String
-    fun push(pushSession: PushSessionServiceImpl.PushSession, serverStatusView: ServerStatusView): ServerStatusResultView
-    fun getOnline(userSession: UserSessionServiceImpl.UserSession): OnlineResultView
+    /**
+     * 终端登录
+     */
+    fun connect(clientLogin: ClientLoginView, clientSession: ClientSession): SimpleView<String>
+
+    /**
+     * 消息上报
+     */
+    fun push(clientPush: ClientPushView, pushSession: PushSession): SimpleView<Boolean>
+
+    /**
+     * 会话终止
+     */
+    fun disConnect(pushSession: PushSession): SimpleView<Boolean>
 }

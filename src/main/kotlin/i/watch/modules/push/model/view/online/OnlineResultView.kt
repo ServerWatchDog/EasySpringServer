@@ -11,7 +11,7 @@ data class OnlineItemView(
     val cpuName: String,
     val cpuStage: Long,
     val memory: Long,
-    val userMemory: Long,
+    val usedMemory: Long,
     val disk: Long,
     val usedDisk: Long,
     val usedNetwork: Long,

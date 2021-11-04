@@ -1,6 +1,5 @@
 package i.watch.modules.user.service.impl
 
-import com.j256.twofactorauth.TimeBasedOneTimePasswordUtil
 import com.querydsl.jpa.impl.JPAQueryFactory
 import i.watch.handler.advice.BadRequestException
 import i.watch.handler.advice.ForbiddenException
@@ -31,6 +30,7 @@ import org.springframework.stereotype.Service
 import java.time.LocalDateTime
 import java.util.Optional
 import javax.annotation.Resource
+import com.j256.twofactorauth.TimeBasedOneTimePasswordUtil.generateCurrentNumberString as twoFactoryGem
 
 @Service
 class UserServiceImpl(
@@ -49,39 +49,31 @@ class UserServiceImpl(
 
     private val logger = getLogger()
     override fun tryLogin(loginView: LoginView): LoginResultView {
-        return QUserEntity.userEntity.let {
-            jpaQuery.selectFrom(it)
-                .where(it.email.eq(loginView.account.lowercase())).fetchOne()
-                .run { Optional.ofNullable(this) }
-        }.orElseThrow {
-            logger.debug("未找到邮箱为 {} 的用户.", loginView.account)
-            BadRequestException("用户名或密码错误")
-        }.let {
-            if (hashUtils.verify(loginView.password, it.password)) {
-                //  密码匹配
-                if (it.twoFactor.isEmpty()) {
-                    LoginResultView(
-                        LoginResultView.LoginResultType.SUCCESS,
-                        userSessionService.createSessionByUserId(it.id)
-                    )
-                } else {
-                    // 两步验证
-                    if (TimeBasedOneTimePasswordUtil.generateCurrentNumberString(it.twoFactor)
-                        == loginView.code
-                    ) {
-                        LoginResultView(
-                            // 登录成功
-                            LoginResultView.LoginResultType.SUCCESS,
-                            userSessionService.createSessionByUserId(it.id)
-                        )
-                    } else {
-                        LoginResultView(LoginResultView.LoginResultType.NEED_2FA, "")
-                    }
-                }
-            } else {
+        val qUser = QUserEntity.userEntity
+        return jpaQuery.selectFrom(qUser)
+            .where(qUser.email.eq(loginView.account.lowercase()))
+            .fetchOne()
+            .let { Optional.ofNullable(it) }
+            .filter {
+                hashUtils.verify(loginView.password, it.password)
+            }.or {
+                logger.debug("未找到邮箱为 {} 的用户.", loginView.account)
                 throw BadRequestException("用户名或密码错误")
+            }.filter {
+                it.twoFactor.isEmpty() ||
+                    twoFactoryGem(it.twoFactor) == loginView.code
+            }.map {
+                LoginResultView(
+                    // 登录成功
+                    LoginResultView.LoginResultType.SUCCESS,
+                    userSessionService.createSessionByUserId(it.id)
+                )
+            }.or {
+                logger.debug("用户  {} 二步验证未通过.", loginView.account)
+                Optional.of(LoginResultView(LoginResultView.LoginResultType.NEED_2FA, ""))
+            }.orElseThrow {
+                BadRequestException("用户名或密码错误")
             }
-        }
     }
 
     override fun tryRegister(user: RegisterView): RegisterResultView {

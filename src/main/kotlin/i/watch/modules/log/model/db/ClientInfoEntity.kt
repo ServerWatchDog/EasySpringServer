@@ -35,5 +35,5 @@ class ClientInfoEntity(
     val client: ClientEntity
 ) {
     @OneToMany(mappedBy = "linkedInfo")
-    val statuses: MutableSet<ClientStatusEntity> = mutableSetOf()
+    val onlines: MutableSet<ClientOnlineEntity> = mutableSetOf()
 }
