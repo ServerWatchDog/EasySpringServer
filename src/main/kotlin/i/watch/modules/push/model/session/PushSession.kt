@@ -9,7 +9,7 @@ import java.time.LocalDateTime
 import java.util.concurrent.TimeUnit
 
 class PushSession(lightDBMap: LightDBMap) :
-    LightDBSession(lightDBMap, 5, TimeUnit.MINUTES) {
+    LightDBSession(lightDBMap, 1, TimeUnit.HOURS) {
     var lastPushDate by lightDBMap.bind<LocalDateTime>("client.push.date", LocalDateTime.MIN)
     var lastSaveDate by lightDBMap.bind<LocalDateTime>("client.push.date", LocalDateTime.MIN)
     var clientStatus by bind<ClientPushView>("client.status")

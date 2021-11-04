@@ -1,8 +1,4 @@
-package i.watch.modules.push.model.view.online
-
-data class OnlineResultView(
-    val data: List<OnlineItemView>
-)
+package i.watch.modules.client.model.view.online
 
 data class OnlineItemView(
     val name: String,

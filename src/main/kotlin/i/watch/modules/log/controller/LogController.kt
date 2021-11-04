@@ -1,10 +1,8 @@
-package i.watch.modules.log.config
+package i.watch.modules.log.controller
 
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/api/log")
-class LogController {
-
-}
+class LogController

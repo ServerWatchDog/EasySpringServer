@@ -35,6 +35,7 @@ class PushServiceImpl(
             this.clientOnlineId = logService.putClientInfo(clientSession.clientId, clientLogin)
             this.clientInfo = clientLogin
         }
+        clientSession.currentPushToken = newToken
         return SimpleView(newToken)
     }
 
@@ -49,13 +50,18 @@ class PushServiceImpl(
     }
 
     override fun push(clientPush: ClientPushView, pushSession: PushSession): SimpleView<Boolean> {
-        pushSession.clientStatus = clientPush
         if (pushSession.lastSaveDate.isBefore(LocalDateTime.now().minusMinutes(5))) {
             logService.putClientStatus(pushSession.clientId, pushSession.clientOnlineId, clientPush)
             pushSession.lastSaveDate = LocalDateTime.now()
         }
+        pushSession.clientStatus = clientPush
         pushSession.lastPushDate = LocalDateTime.now()
         return SimpleView(true)
+    }
+
+    override fun getPushSessionByToken(currentPushToken: String): Optional<PushSession> {
+        return lightDB.getMap("session:push:$currentPushToken")
+            .map { PushSession(it) }
     }
 
     override fun disConnect(pushSession: PushSession): SimpleView<Boolean> {
@@ -66,7 +72,9 @@ class PushServiceImpl(
                 it.currentPushToken = ""
             }
             // 断开会话
+            logService.putLogoutMessage(pushSession.clientId,pushSession.clientOnlineId)
         }
         return SimpleView(true)
     }
+
 }

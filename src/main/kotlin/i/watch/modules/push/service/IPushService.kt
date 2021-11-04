@@ -5,6 +5,7 @@ import i.watch.modules.push.model.session.PushSession
 import i.watch.modules.push.model.view.push.ClientLoginView
 import i.watch.modules.push.model.view.push.ClientPushView
 import i.watch.utils.template.SimpleView
+import java.util.Optional
 
 interface IPushService {
     /**
@@ -21,4 +22,6 @@ interface IPushService {
      * 会话终止
      */
     fun disConnect(pushSession: PushSession): SimpleView<Boolean>
+
+    fun getPushSessionByToken(currentPushToken: String): Optional<PushSession>
 }
